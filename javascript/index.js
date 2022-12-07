@@ -2,7 +2,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 
 // Game params
-let gameParams = {};
+let gameParams = {}, interval = undefined;
 const GRIDSIZE = 25;
 
 window.onload = function () {
@@ -29,8 +29,7 @@ function setDefault() {
         next: {
             x: 0,
             y: 0
-        },
-        interval: null
+        }
     }
 }
 
@@ -112,20 +111,17 @@ function increaseStatistics() {
 }
 
 function runInterval() {
-    if (gameParams.interval) {
-        clearInterval(gameParams.interval);
-        gameParams.interval = null;
+    if (interval) {
+        clearInterval(interval);
+        interval = undefined;
     }
-
-    const timer = gameParams.level + 10;
-    gameParams.interval = setInterval(controller, 1000 / timer);
+    interval = setInterval(controller, 1000 / (gameParams.level + 10));
 }
 
 function showPoints() {
     document.getElementById('points').innerHTML = "<h3> Points: " + gameParams.points + "</h3>";
 }
 
-
-const pauseGame = () => {
-    gameActive = false;
-}
+// const pauseGame = () => {
+//     gameActive = false;
+// }
