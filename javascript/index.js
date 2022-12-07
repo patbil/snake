@@ -1,103 +1,127 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 
-let gameActive = false;
-
 // Game params
-let gridSize = (titleSize = 25);
-let nextX = (nextY = 0);
-let snakeX = (snakeY = 10);
-let appleX = (appleY = 15);
-let size = 5;
-let trails = [];
-let points = 0;
+let gameParams = {}, interval = undefined;
+const GRIDSIZE = 25;
 
 window.onload = function () {
-    gameActive = true;
-    showPoints();
     document.addEventListener('keydown', keydown);
-    setInterval(draw, 1000 / 20);
+    startGame();
+}
+
+// setting default values
+function setDefault() {
+    gameParams = {
+        active: false,
+        size: 5,
+        level: 1,
+        points: 0,
+        trails: [],
+        apple: {
+            x: 15,
+            y: 15
+        },
+        snake: {
+            x: 10,
+            y: 10
+        },
+        next: {
+            x: 0,
+            y: 0
+        }
+    }
 }
 
 const startGame = () => {
-    gameActive = true;
-}
-
-const endGame = () => {
-    gameActive = false;
-}
-
-const pauseGame = () => {
-    gameActive = false;
+    setDefault();
+    showPoints();
+    runInterval();
 }
 
 const keydown = (e) => {
-    console.log(e);
     switch (e.keyCode) {
         case 37:
-            nextX = -1;
-            nextY = 0;
+            gameParams.next.x = -1;
+            gameParams.next.y = 0;
             break;
         case 38:
-            nextX = 0;
-            nextY = -1;
+            gameParams.next.x = 0;
+            gameParams.next.y = -1;
             break;
         case 39:
-            nextX = 1;
-            nextY = 0;
+            gameParams.next.x = 1;
+            gameParams.next.y = 0;
             break;
         case 40:
-            nextX = 0;
-            nextY = 1;
+            gameParams.next.x = 0;
+            gameParams.next.y = 1;
             break;
         case 80:
-            console.log("PAUSE");
+            pauseGame();
             break;
-        case 82:
-            console.log("RESTART")
-            break;
-        default:
-            console.log("ERROR::NOT_IMPLEMENTATION");
+        case 82: // restart - R
+            startGame();
             break;
     }
 }
 
-const draw = () => {
-    snakeX += nextX;
-    snakeY += nextY;
+function controller() {
+    gameParams.snake.x += gameParams.next.x;
+    gameParams.snake.y += gameParams.next.y;
 
-    if (snakeX < 0) snakeX = titleSize - 1;
-    if (snakeY < 0) snakeY = titleSize - 1;
-    if (snakeX > titleSize - 1) snakeX = 0;
-    if (snakeY > titleSize - 1) snakeY = 0;
+    if (gameParams.snake.x < 0) gameParams.snake.x = GRIDSIZE - 1;
+    if (gameParams.snake.y < 0) gameParams.snake.y = GRIDSIZE - 1;
+    if (gameParams.snake.x > GRIDSIZE - 1) gameParams.snake.x = 0;
+    if (gameParams.snake.y > GRIDSIZE - 1) gameParams.snake.y = 0;
 
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = 'green';
-    ctx.fillRect(appleX * gridSize, appleY * gridSize, gridSize - 4, gridSize - 4);
+    ctx.fillRect(gameParams.apple.x * GRIDSIZE, gameParams.apple.y * GRIDSIZE, GRIDSIZE - 4, GRIDSIZE - 4);
 
     ctx.fillStyle = 'red'
-    for (let i = 0; i < trails.length; i++) {
-        ctx.fillRect(trails[i].x * gridSize, trails[i].y * gridSize, gridSize - 4, gridSize - 4);
 
-        if (trails[i].x == snakeX && trails[i].y == snakeY) size = 5
+    for (let i = 0; i < gameParams.trails.length; i++) {
+        ctx.fillRect(gameParams.trails[i].x * GRIDSIZE, gameParams.trails[i].y * GRIDSIZE, GRIDSIZE - 4, GRIDSIZE - 4);
+
+        if ((gameParams.size !== 5) && (gameParams.trails[i].x === gameParams.snake.x && gameParams.trails[i].y === gameParams.snake.y))
+            startGame();
     }
+    gameParams.trails.push({ x: gameParams.snake.x, y: gameParams.snake.y });
+    while (gameParams.trails.length > gameParams.size) gameParams.trails.shift();
 
-    trails.push({ x: snakeX, y: snakeY });
-    while (trails.length > size) trails.shift();
-
-
-    if (snakeX == appleX && snakeY == appleY) {
-        size++;
-        showPoints();
-        appleX = Math.floor(Math.random() * titleSize);
-        appleY = Math.floor(Math.random() * titleSize);
+    if (gameParams.snake.x == gameParams.apple.x && gameParams.snake.y == gameParams.apple.y) {
+        gameParams.apple.x = Math.floor(Math.random() * GRIDSIZE);
+        gameParams.apple.y = Math.floor(Math.random() * GRIDSIZE);
+        increaseStatistics();
     }
-
 }
 
-function showPoints () {
-    points ++;
-    document.getElementById('points').innerHTML = "<h3> Points: " + points + "</h3>";
+function increaseStatistics() {
+    gameParams.points++;
+    gameParams.size++;
+    showPoints();
+
+    if (gameParams.points % 5 === 0) {
+        gameParams.level++;
+        runInterval();
+    }
 }
+
+function runInterval() {
+    if (interval) {
+        clearInterval(interval);
+        interval = undefined;
+    }
+    interval = setInterval(controller, 1000 / (gameParams.level + 10));
+}
+
+function showPoints() {
+    document.getElementById('points').innerHTML = "<h3> Points: " + gameParams.points + "</h3>";
+}
+
+// const pauseGame = () => {
+//     gameActive = false;
+// }
