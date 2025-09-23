@@ -121,7 +121,3 @@ function runInterval() {
 function showPoints() {
     document.getElementById('points').innerHTML = "<h3> Points: " + gameParams.points + "</h3>";
 }
-
-// const pauseGame = () => {
-//     gameActive = false;
-// }
