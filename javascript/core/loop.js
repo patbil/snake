@@ -13,16 +13,16 @@ export function createLoop(callback, speed) {
     interval = undefined;
   }
 
-  function snapshot() {
-    return { speed: currentSpeed };
-  }
-
   function setSpeed(s) {
     currentSpeed = s;
     if (interval) {
       stop();
       start();
     }
+  }
+
+  function snapshot() {
+    return { speed: currentSpeed };
   }
 
   return { start, stop, setSpeed, snapshot };

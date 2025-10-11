@@ -1,7 +1,6 @@
 import { createStateManager } from "./state.js";
 
-export function createEngine(config) {
-  let initialized = false;
+export function createEngine(config, initialized = false) {
   const stateManager = createStateManager(config);
 
   function initialize() {
@@ -27,7 +26,6 @@ export function createEngine(config) {
 
       stateManager.addHead(newX, newY);
 
-      // re-read state after mutation
       let after = stateManager.snapshot();
       while (after.segments.length > config.startSegmentCount + after.score) {
         stateManager.removeTail();
@@ -71,9 +69,7 @@ export function createEngine(config) {
     stateManager.setDirection(x, y);
   }
 
-  function togglePause() {
-
-  }
+  function togglePause() {}
 
   return { tick, setDirection, togglePause };
 }
