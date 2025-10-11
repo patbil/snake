@@ -1,89 +1,100 @@
-import { config } from "./config.js";
+export function createStateManager(config) {
+  const listeners = new Map();
+  const state = {
+    pause: false,
+    score: 0,
+    level: 0,
+    segments: [],
+    apple: { x: null, y: null },
+    direction: { x: null, y: null },
+  };
 
-const state = {
-  pause: false,
-  score: null,
-  level: null,
-  segments: [],
-  apple: {
-    x: null,
-    y: null,
-  },
-  direction: {
-    x: null,
-    y: null,
-  },
-};
+  function on(name, handler) {
+    if (!listeners.has(name)) listeners.set(name, new Set());
+    listeners.get(name).add(handler);
+  }
 
-function getScore() {
-  return state.score;
+  function off(name, handler) {
+    listeners.get(name)?.delete(handler);
+  }
+
+  function emit(name, payload) {
+    const listener = listeners.get(name);
+    if (!listener) return;
+    for (const handler of Array.from(listener)) handler(payload);
+  }
+
+  function snapshot() {
+    return {
+      pause: state.pause,
+      score: state.score,
+      level: state.level,
+      segments: state.segments.slice(),
+      apple: { ...state.apple },
+      direction: { ...state.direction },
+    };
+  }
+
+  function setDefault() {
+    state.level = 0;
+    state.score = 0;
+    state.pause = false;
+    state.segments = Array.from({ length: config.startSegmentCount }, (_, i) => ({
+      x: 10 - i,
+      y: 10,
+    }));
+    state.direction = { x: 0, y: 0 };
+    state.apple = { x: 15, y: 15 };
+    emit("reset", snapshot());
+  }
+
+  function setDirection(newX, newY) {
+    const allowed = [-1, 0, 1];
+    const ok = allowed.includes(newX) && allowed.includes(newY);
+    if (!ok) return;
+
+    state.direction.x = newX;
+    state.direction.y = newY;
+    emit("direction", { x: newX, y: newY });
+  }
+
+  function setApple(newX, newY) {
+    state.apple.x = newX;
+    state.apple.y = newY;
+    emit("apple", { x: newX, y: newY });
+  }
+
+  function increaseScore() {
+    state.score += 1;
+    emit("score", state.score);
+  }
+
+  function increaseLevel() {
+    state.level += 1;
+    emit("level", state.level);
+  }
+
+  function addHead(newX, newY) {
+    state.segments.unshift({ x: newX, y: newY });
+    emit("state", snapshot());
+  }
+
+  function removeTail() {
+    state.segments.pop();
+    emit("state", snapshot());
+  }
+
+  return {
+    on,
+    off,
+    emit,
+    snapshot,
+    setDefault,
+    setDirection,
+    setApple,
+    increaseLevel,
+    increaseScore,
+    addHead,
+    removeTail,
+  };
 }
-
-function getSegments() {
-  return state.segments;
-}
-
-function getDirection() {
-  return { x: state.direction.x, y: state.direction.y };
-}
-
-function getApplePosition() {
-  return { x: state.apple.x, y: state.apple.y };
-}
-
-function setApplePosition(newX, newY) {
-  state.apple.x = newX;
-  state.apple.y = newY;
-}
-
-function setDirection(newX, newY) {
-  state.direction.x = newX;
-  state.direction.y = newY;
-}
-
-function setSnakeHead(x, y) {
-  state.segments.unshift({ x, y });
-}
-
-function setDefault() {
-  state.pause = false;
-  state.level = 0;
-  state.score = 0;
-
-  setDirection(0, 0);
-  setApplePosition(15, 15);
-  Array.from({ length: config.startSegmentCount }).map((_, i) =>
-    state.segments.push({ x: 10 - i, y: 10 })
-  );
-}
-
-function increaseScore() {
-  state.score += 1;
-}
-
-function increaseLevel() {
-  state.level += 1;
-}
-
-function removeSnakeTail() {
-  state.segments.pop();
-}
-
-function changePauseState() {
-  state.pause = !state.pause;
-}
-
-export {
-  getApplePosition,
-  getDirection,
-  getSegments,
-  getScore,
-  setApplePosition,
-  setDirection,
-  setDefault,
-  setSnakeHead,
-  increaseLevel,
-  increaseScore,
-  removeSnakeTail,
-  changePauseState,
-};
