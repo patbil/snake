@@ -1,10 +1,29 @@
-let interval = undefined;
+export function createLoop(callback, speed) {
+  let interval = undefined;
+  let currentSpeed = speed;
 
-export function loop(callback, speed) {
-  if (interval) {
+  function start() {
+    if (interval) return;
+    interval = setInterval(callback, currentSpeed);
+  }
+
+  function stop() {
+    if (!interval) return;
     clearInterval(interval);
     interval = undefined;
   }
 
-  interval = setInterval(callback, speed);
+  function setSpeed(s) {
+    currentSpeed = s;
+    if (interval) {
+      stop();
+      start();
+    }
+  }
+
+  function snapshot() {
+    return { speed: currentSpeed };
+  }
+
+  return { start, stop, setSpeed, snapshot };
 }
