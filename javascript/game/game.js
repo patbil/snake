@@ -11,7 +11,7 @@ export function startGame() {
   const engine = createEngine(config);
   const renderer = createRenderer(canvas, config);
   const keydownHandler = createKeydownHandler(engine);
-  
+
   keydownHandler.start();
 
   const loop = createLoop(() => {
@@ -21,7 +21,7 @@ export function startGame() {
     if (events.appleEaten) updateScore(snapshot.score);
     if (events.levelUp) {
       updateLevel(snapshot.level);
-      loop.speedUp(config.speedStep)
+      loop.setSpeed(loop.snapshot().speed - config.speedStep);
     }
   }, config.startSpeed);
 

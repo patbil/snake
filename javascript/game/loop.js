@@ -13,8 +13,8 @@ export function createLoop(callback, speed) {
     interval = undefined;
   }
 
-  function speedUp(time) {
-    setSpeed(currentSpeed - time);
+  function snapshot() {
+    return { speed: currentSpeed };
   }
 
   function setSpeed(s) {
@@ -25,5 +25,5 @@ export function createLoop(callback, speed) {
     }
   }
 
-  return { start, stop, setSpeed, speedUp };
+  return { start, stop, setSpeed, snapshot };
 }
