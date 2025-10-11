@@ -12,20 +12,19 @@ export function startGame() {
   const renderer = createRenderer(canvas, config);
   const keydownHandler = createKeydownHandler(engine);
 
-  keydownHandler.start();
-
   const loop = createLoop(() => {
-    const { snapshot, events } = engine.tick(config.gridSize);
+    const snapshot = engine.tick(config.gridSize);
     renderer.render(snapshot, config.gridSize);
-
-    if (events.appleEaten) updateScore(snapshot.score);
-    if (events.levelUp) {
-      updateLevel(snapshot.level);
-      loop.setSpeed(loop.snapshot().speed - config.speedStep);
-    }
   }, config.startSpeed);
 
+  engine.on("score", (score) => updateScore(score));
+  engine.on("level", (level) => {
+    updateLevel(level);
+    loop.setSpeed(loop.snapshot().speed - config.speedStep);
+  });
+
   loop.start();
+  keydownHandler.start();
 
   return {
     stop() {

@@ -39,10 +39,13 @@ export function createStateManager(config) {
     state.level = 0;
     state.score = 0;
     state.pause = false;
-    state.segments = Array.from({ length: config.startSegmentCount }, (_, i) => ({
-      x: 10 - i,
-      y: 10,
-    }));
+    state.segments = Array.from(
+      { length: config.startSegmentCount },
+      (_, i) => ({
+        x: 10 - i,
+        y: 10,
+      })
+    );
     state.direction = { x: 0, y: 0 };
     state.apple = { x: 15, y: 15 };
     emit("reset", snapshot());

@@ -13,8 +13,6 @@ export function createEngine(config, initialized = false) {
 
     const gridSize = config.gridSize;
     let before = stateManager.snapshot();
-    const events = { appleEaten: false, levelUp: false };
-
     if (before.direction.x !== 0 || before.direction.y !== 0) {
       let newX = before.segments[0].x + before.direction.x;
       let newY = before.segments[0].y + before.direction.y;
@@ -34,7 +32,6 @@ export function createEngine(config, initialized = false) {
       before = after; // keep latest for subsequent checks
     }
 
-    // check apple collision using latest state snapshot
     if (
       before.segments[0].x == before.apple.x &&
       before.segments[0].y == before.apple.y
@@ -45,24 +42,24 @@ export function createEngine(config, initialized = false) {
       );
 
       stateManager.increaseScore();
-      events.appleEaten = true;
-
       const afterScore = stateManager.snapshot().score;
       if (afterScore % config.levelStep === 0) {
         stateManager.increaseLevel();
-        events.levelUp = true;
       }
     }
 
     const latest = stateManager.snapshot();
-    const snapshot = {
+
+    return {
       segments: latest.segments,
       apple: latest.apple,
       score: latest.score,
       level: latest.level,
     };
+  }
 
-    return { snapshot, events };
+  function on(name, handler) {
+    stateManager.on(name, handler);
   }
 
   function setDirection(x, y) {
@@ -71,5 +68,5 @@ export function createEngine(config, initialized = false) {
 
   function togglePause() {}
 
-  return { tick, setDirection, togglePause };
+  return { tick, setDirection, togglePause, on };
 }
