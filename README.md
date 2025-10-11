@@ -1,33 +1,59 @@
-# SNAKE
+# Snake — Browser Game
 
-A simple implementation of the classic Snake game (originally released in 1976), built for the web using HTML, CSS, and JavaScript.Follow these steps to get the Snake Game up and running on your local machine:
+A simple implementation of the classic Snake game (originally released in 1976), built for the web using HTML, CSS, and JavaScript. The project is intentionally modular: core game logic, rendering, input and layout are separated so the code is easier to test and maintain.
 
-1. **Clone the project**
+---
+
+## Quick start (local)
+
+This project does not require a build step. Serve the files with a static server and open the page in your browser.
+
+1. Clone the repository:
+
 ```bash
-git clone https://github.com/username/snake-game.git
+git clone <repo-url>
+cd snake
 ```
 
-2. **Navigate to the project folder**
-```bash
-cd snake-game
+2. Start a static server (for example via `npx serve` or VS Code Live Server):
+
+```powershell
+npx serve .
+# or use Live Server in VS Code
 ```
 
-3. **Open the project in your preferred code editor**  
-For example, [Visual Studio Code](https://code.visualstudio.com/):
-```bash
-code .
-```
+3. Open the address provided by the server (for example `http://localhost:5000`).
 
-4. **Start a local development server**  
-Using the Live Server extension for VS Code, or using `npx serve`:
-```bash
-npx serve
-```
+---
 
-5. **Access the game in your browser**  
-Open `http://localhost:5500` (or the address provided by your server)
+## Project structure (overview)
 
-6. **Exit Bash or stop the server if needed**  
-Commands: `exit` to leave Bash, `Ctrl + C` to stop a running server, or `Ctrl + D` also exits Bash
+- `index.html` — main HTML file
+- `css/` — styles (main theme and modal styles)
+- `javascript/index.js` — entry point
+- `javascript/core/` — core game modules
+  - `config.js` — game configuration (grid size, speed, colors)
+  - `state.factory.js` — an instance-based state manager
+  - `engine.js` — game logic (movement, collisions, scoring)
+  - `renderer.js` — drawing the game state to a canvas
+  - `loop.js` — game loop controller (start/stop/setSpeed)
+  - `input.js` — keyboard input / input adapter
+- `javascript/layout/` — DOM updates (score, level, settings modal)
 
-7. **Start playing!** 🎮
+Design principle: keep game logic independent from the DOM. The engine produces snapshots/events; renderer and layout subscribe and update the UI.
+
+---
+
+## Development notes
+
+- Run the game with a local static server (see Quick start).
+- When adding features, prefer adding them to `javascript/core/` as modular units: keep logic in `engine`, drawing in `renderer`, and avoid DOM access from `core` modules.
+- Prefer instance-based state (the `state.factory.js`) over a global singleton — it simplifies unit testing.
+
+---
+
+## Suggested next improvements
+
+- Replace `setInterval` loop with a `requestAnimationFrame` fixed timestep loop to improve pause control and timing stability.
+- Add `togglePause()` to engine and wire the space key to it.
+- Add unit tests (Vitest/Jest) for engine behaviors (movement, apple eating, tail trimming).
