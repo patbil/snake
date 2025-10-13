@@ -80,6 +80,10 @@ export function createEngine(config) {
         stateManager.setDirection(x, y);
     }
 
+    function getDirection() {
+        return stateManager.snapshot().direction;
+    }
+
     function togglePause() {
         stateManager.togglePause();
     }
@@ -98,16 +102,14 @@ export function createEngine(config) {
         }
 
         const [head, ...body] = state.segments;
+        const colision = body.some(
+            (segment) => segment.x === head.x && segment.y === head.y
+        );
+        const consumption =
+            head.x === state.apple.x && head.y === state.apple.y;
 
-        if (
-            body.some((segment) => segment.x === head.x && segment.y === head.y)
-        ) {
-            state = handleColision(state);
-        }
-
-        if (head.x === state.apple.x && head.y === state.apple.y) {
-            state = handleConsumption();
-        }
+        if (colision) state = handleColision(state);
+        if (consumption) state = handleConsumption();
 
         return {
             segments: state.segments,
@@ -117,5 +119,5 @@ export function createEngine(config) {
         };
     }
 
-    return { on, tick, setDirection, togglePause };
+    return { on, tick, setDirection, getDirection, togglePause };
 }

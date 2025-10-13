@@ -6,46 +6,57 @@
  * @returns {object} Public interface to start and stop the input listener.
  */
 export function createKeydownHandler(engine) {
-    /**
-     * The core event handler function that processes key presses.
-     * @param {KeyboardEvent} e - The keyboard event object.
-     */
+    const directionMap = {
+        ArrowLeft: [-1, 0],
+        a: [-1, 0],
+        ArrowUp: [0, -1],
+        w: [0, -1],
+        ArrowRight: [1, 0],
+        d: [1, 0],
+        ArrowDown: [0, 1],
+        s: [0, 1],
+    };
+
+    function isOppositeDirection(newDx, newDy, currentDir) {
+        return newDx + currentDir.x === 0 && newDy + currentDir.y === 0;
+    }
+
     const handler = (event) => {
-        if (
-            [" ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(
-                event.key
-            )
-        ) {
+        const key = event.key;
+
+        if (directionMap[key] || key === " ") {
             event.preventDefault();
         }
 
-        switch (event.key) {
-            case " ":
-                engine.togglePause();
-                break;
-            case "ArrowLeft":
-            case "a":
-                engine.setDirection(-1, 0);
-                break;
-            case "ArrowUp":
-            case "w":
-                engine.setDirection(0, -1);
-                break;
-            case "ArrowRight":
-            case "d":
-                engine.setDirection(1, 0);
-                break;
-            case "ArrowDown":
-            case "s":
-                engine.setDirection(0, 1);
-                break;
+        if (key === " ") {
+            engine.togglePause();
+            return;
+        }
+
+        const vector = directionMap[key];
+        if (vector) {
+            const [newDx, newDy] = vector;
+            const currentDir = engine.getDirection();
+            if (currentDir && (currentDir.x !== 0 || currentDir.y !== 0)) {
+                if (isOppositeDirection(newDx, newDy, currentDir)) {
+                    return;
+                }
+            }
+
+            engine.setDirection(newDx, newDy);
         }
     };
 
+    /**
+     * Starts listening for global keydown events.
+     */
     function start() {
         window.addEventListener("keydown", handler);
     }
 
+    /**
+     * Stops listening for global keydown events.
+     */
     function stop() {
         window.removeEventListener("keydown", handler);
     }

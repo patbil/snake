@@ -70,8 +70,8 @@ export function createStateManager(config) {
         emit("reset", snapshot());
     }
 
-    function addHead(newX, newY) {
-        state.segments.unshift({ x: newX, y: newY });
+    function addHead(x, y) {
+        state.segments.unshift({ x, y });
         emit("state", snapshot());
     }
 
@@ -80,20 +80,20 @@ export function createStateManager(config) {
         emit("state", snapshot());
     }
 
-    function setDirection(newX, newY) {
+    function setDirection(x, y) {
         const allowed = [-1, 0, 1];
-        const ok = allowed.includes(newX) && allowed.includes(newY);
+        const ok = allowed.includes(x) && allowed.includes(y);
         if (!ok) return;
 
-        if (newX !== 0 || newY !== 0) {
+        if (x !== 0 || y !== 0) {
             state.prevDirection = {
                 x: state.direction.x,
                 y: state.direction.y,
             };
         }
 
-        state.direction = { x: newX, y: newY };
-        emit("direction", { x: newX, y: newY });
+        state.direction = { x, y };
+        emit("direction", { x, y });
     }
 
     function togglePause() {
@@ -109,9 +109,9 @@ export function createStateManager(config) {
         emit("pause", state.pause);
     }
 
-    function setApple(newX, newY) {
-        state.apple = { x: newX, y: newY };
-        emit("apple", { x: newX, y: newY });
+    function setApple(x, y) {
+        state.apple = { x, y };
+        emit("apple", { x, y });
     }
 
     function increaseScore() {

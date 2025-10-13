@@ -105,6 +105,8 @@ h1 {
   border: 1px solid var(--accent-dim);
   box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.25);
   position: relative;
+   margin-left: auto;
+    margin-right: auto;
 }
 
 /* pixel-friendly canvas (but readable) */
