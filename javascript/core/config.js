@@ -15,9 +15,7 @@ export const config = {
     levelStep: 2,
     /** The amount by which speed decreases (interval decreases) per level step in milliseconds. */
     speedStep: 10,
-
-    showGrid: true,
-
+    /** Configuration settings for the audio manager */
     sound: {
         enabled: true,
         volume: 0.02,
@@ -25,7 +23,6 @@ export const config = {
         gameover: "assets/sound/game-over.mp3",
         levelup: "assets/sound/level-up.mp3",
     },
-
     /** Defines the colors used for rendering the game elements. */
     colors: {
         snake: "red",

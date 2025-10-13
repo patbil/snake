@@ -1,44 +1,17 @@
-import { config } from "./config.js";
 import { createLoop } from "./loop.js";
 import { createEngine } from "./engine.js";
 import { createRenderer } from "./renderer.js";
 import { createKeydownHandler } from "./handler.js";
-import { createLayoutManager } from "../ui/layout.js";
-import { createAudioManager } from "./sound.js";
 
-const canvas = document.getElementById("canvas");
-
-function setupSubscriptions(engine, loop, layoutManager, soundManager) {
-    engine.on("pause", (pause) => layoutManager.togglePause(pause));
-
-    engine.on("score", (score) => {
-        layoutManager.updateScore(score);
-        soundManager.play("eat");
-    });
-
-    engine.on("gameover", (snapshot) => {
-        layoutManager.gameOver(snapshot);
-        soundManager.play("gameover");
-    });
-
-    engine.on("level", (level) => {
-        layoutManager.updateLevel(level);
-        soundManager.play("levelup");
-
-        const currentSpeed = loop.snapshot().speed;
-        const newSpeed = Math.max(
-            config.maxSpeed,
-            currentSpeed - config.speedStep
-        );
-        loop.setSpeed(newSpeed);
-    });
-}
-
-export function startGame() {
+/**
+ * Creates and manages the full lifecycle of the Snake game (start, stop, pause, restart).
+ * Maintains encapsulation of the core game state.
+ * * @param {object} dependencies - Dependencies: layoutManager, audioManager, config, canvas.
+ * @returns {object} The public control interface.
+ */
+export function createGame({ layoutManager, audioManager, config, canvas }) {
     const engine = createEngine(config);
     const renderer = createRenderer(canvas, config);
-    const layoutManager = createLayoutManager();
-    const soundManager = createAudioManager(config);
     const keydownHandler = createKeydownHandler(engine);
 
     const loop = createLoop(() => {
@@ -46,15 +19,72 @@ export function startGame() {
         renderer.render(snapshot, config.gridSize);
     }, config.initialSpeed);
 
-    setupSubscriptions(engine, loop, layoutManager, soundManager);
+    registerEvents();
 
-    loop.start();
-    keydownHandler.start();
+    /**
+     * Starts the game loop and activates key listening.
+     * Used for initial start or resuming after a global stop/restart.
+     */
+    function start() {
+        loop.start();
+        keydownHandler.start();
+        layoutManager.togglePause(false);
+    }
+
+    /**
+     * Completely stops the loop and deactivates key listening.
+     * Used for Game Over or preparing for a clean restart.
+     */
+    function stop() {
+        loop.stop();
+        keydownHandler.stop();
+    }
+
+    /**
+     * Toggles the pause state in the engine.
+     * The engine will emit the 'pause' event, which is handled below.
+     */
+    function togglePause() {
+        engine.togglePause();
+    }
+    /**
+     * Registers all event subscriptions from the core engine to external managers.
+     */
+    function registerEvents() {
+        engine.on("pause", handlePause);
+        engine.on("score", handleScore);
+        engine.on("level", handleLevel);
+        engine.on("gameover", handleGameOver);
+    }
+
+    function handlePause(isPaused) {
+        layoutManager.togglePause(isPaused);
+        isPaused ? loop.pause() : loop.start();
+    }
+
+    function handleScore(score) {
+        layoutManager.updateScore(score);
+        audioManager.play("eat");
+    }
+
+    function handleLevel(level) {
+        layoutManager.updateLevel(level);
+        audioManager.play("levelup");
+
+        const { speed } = loop.snapshot();
+        const newSpeed = Math.max(config.maxSpeed, speed - config.speedStep);
+        loop.setSpeed(newSpeed);
+    }
+
+    function handleGameOver(snapshot) {
+        layoutManager.gameOver(snapshot);
+        audioManager.play("gameover");
+        stop();
+    }
 
     return {
-        stop() {
-            loop.stop();
-            keydownHandler.stop();
-        },
+        start,
+        stop,
+        togglePause,
     };
 }
