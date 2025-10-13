@@ -1,103 +1,147 @@
+/**
+ * State Manager Factory for the Snake game.
+ * Encapsulates all game state, manages mutations, and utilizes the Event Emitter pattern.
+ *
+ * @param {object} config - Game configuration object (e.g., gridSize, initialSegmentCount).
+ * @returns {object} The public State Manager interface.
+ */
 export function createStateManager(config) {
-  const listeners = new Map();
-  const state = {
-    pause: false,
-    score: 0,
-    level: 0,
-    segments: [],
-    apple: { x: null, y: null },
-    direction: { x: null, y: null },
-  };
-
-  function on(name, handler) {
-    if (!listeners.has(name)) listeners.set(name, new Set());
-    listeners.get(name).add(handler);
-  }
-
-  function off(name, handler) {
-    listeners.get(name)?.delete(handler);
-  }
-
-  function emit(name, payload) {
-    const listener = listeners.get(name);
-    if (!listener) return;
-    for (const handler of Array.from(listener)) handler(payload);
-  }
-
-  function snapshot() {
-    return {
-      pause: state.pause,
-      score: state.score,
-      level: state.level,
-      segments: state.segments.slice(),
-      apple: { ...state.apple },
-      direction: { ...state.direction },
+    const listeners = new Map();
+    const state = {
+        pause: false,
+        score: 0,
+        level: 0,
+        segments: [],
+        direction: { x: 0, y: 0 },
+        prevDirection: { x: 0, y: 0 },
+        apple: { x: null, y: null },
     };
-  }
 
-  function setDefault() {
-    state.level = 0;
-    state.score = 0;
-    state.pause = false;
-    state.segments = Array.from(
-      { length: config.startSegmentCount },
-      (_, i) => ({
-        x: 10 - i,
-        y: 10,
-      })
-    );
-    state.direction = { x: 0, y: 0 };
-    state.apple = { x: 15, y: 15 };
-    emit("reset", snapshot());
-  }
+    function on(name, handler) {
+        if (!listeners.has(name)) listeners.set(name, new Set());
+        listeners.get(name).add(handler);
+    }
 
-  function setDirection(newX, newY) {
-    const allowed = [-1, 0, 1];
-    const ok = allowed.includes(newX) && allowed.includes(newY);
-    if (!ok) return;
+    function off(name, handler) {
+        const set = listeners.get(name);
+        set?.delete(handler);
+        if (set && set.size === 0) listeners.delete(name);
+    }
 
-    state.direction.x = newX;
-    state.direction.y = newY;
-    emit("direction", { x: newX, y: newY });
-  }
+    function emit(name, payload) {
+        const listener = listeners.get(name);
+        if (!listener) return;
+        for (const handler of Array.from(listener)) handler(payload);
+    }
 
-  function setApple(newX, newY) {
-    state.apple.x = newX;
-    state.apple.y = newY;
-    emit("apple", { x: newX, y: newY });
-  }
+    /**
+     * Returns a safe, shallow copy of the current game state .
+     * This protects the internal 'state' object from external mutation.
+     */
+    function snapshot() {
+        return {
+            pause: state.pause,
+            score: state.score,
+            level: state.level,
+            apple: { ...state.apple },
+            direction: { ...state.direction },
+            segments: state.segments.slice(),
+        };
+    }
 
-  function increaseScore() {
-    state.score += 1;
-    emit("score", state.score);
-  }
+    function setDefault() {
+        state.level = 0;
+        state.score = 0;
+        state.pause = false;
 
-  function increaseLevel() {
-    state.level += 1;
-    emit("level", state.level);
-  }
+        const startPos = Math.floor(config.gridSize / 2);
+        state.segments = Array.from(
+            { length: config.initialSegmentCount },
+            (_, i) => ({
+                x: startPos - i,
+                y: startPos,
+            })
+        );
 
-  function addHead(newX, newY) {
-    state.segments.unshift({ x: newX, y: newY });
-    emit("state", snapshot());
-  }
+        state.direction = { x: 0, y: 0 };
+        state.prevDirection = { x: 0, y: 0 };
+        state.apple = { x: startPos + 5, y: startPos + 5 };
 
-  function removeTail() {
-    state.segments.pop();
-    emit("state", snapshot());
-  }
+        emit("reset", snapshot());
+    }
 
-  return {
-    on,
-    off,
-    emit,
-    snapshot,
-    setDefault,
-    setDirection,
-    setApple,
-    increaseLevel,
-    increaseScore,
-    addHead,
-    removeTail,
-  };
+    function addHead(newX, newY) {
+        state.segments.unshift({ x: newX, y: newY });
+        emit("state", snapshot());
+    }
+
+    function removeTail() {
+        state.segments.pop();
+        emit("state", snapshot());
+    }
+
+    function setDirection(newX, newY) {
+        const allowed = [-1, 0, 1];
+        const ok = allowed.includes(newX) && allowed.includes(newY);
+        if (!ok) return;
+
+        if (newX !== 0 || newY !== 0) {
+            state.prevDirection = {
+                x: state.direction.x,
+                y: state.direction.y,
+            };
+        }
+
+        state.direction = { x: newX, y: newY };
+        emit("direction", { x: newX, y: newY });
+    }
+
+    function togglePause() {
+        state.pause = !state.pause;
+
+        if (state.pause) {
+            state.prevDirection = state.direction;
+            state.direction = { x: 0, y: 0 };
+        } else {
+            state.direction = state.prevDirection;
+        }
+
+        emit("pause", state.pause);
+    }
+
+    function setApple(newX, newY) {
+        state.apple = { x: newX, y: newY };
+        emit("apple", { x: newX, y: newY });
+    }
+
+    function increaseScore() {
+        state.score += 1;
+        emit("score", state.score);
+    }
+
+    function increaseLevel() {
+        state.level += 1;
+        emit("level", state.level);
+    }
+
+    function gameOver() {
+        setDefault();
+        emit("gameover", snapshot());
+    }
+
+    return {
+        on,
+        off,
+        emit,
+        snapshot,
+        setDefault,
+        setDirection,
+        togglePause,
+        setApple,
+        increaseLevel,
+        increaseScore,
+        gameOver,
+        addHead,
+        removeTail,
+    };
 }

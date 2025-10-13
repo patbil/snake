@@ -1,32 +1,50 @@
+/**
+ * Creates the Renderer module, responsible for drawing the game state onto a Canvas element.
+ *
+ * @param {HTMLCanvasElement} canvas - The Canvas element where the game will be drawn.
+ * @param {object} config - The configuration object (contains colors).
+ * @returns {object} The public renderer interface with the 'render' function.
+ */
 export function createRenderer(canvas, config) {
-  const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
 
-  function clear() {
-    ctx.fillStyle = config.colors.background;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
+    const GRID_GAP = 4;
+    const { colors } = config;
 
-  function render(snapshot, gridSize) {
-    clear();
+    function clear() {
+        ctx.fillStyle = colors.background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
-    ctx.fillStyle = config.colors.apple;
-    ctx.fillRect(
-      snapshot.apple.x * gridSize,
-      snapshot.apple.y * gridSize,
-      gridSize - 4,
-      gridSize - 4
-    );
+    function drawElement(x, y, blockSize) {
+        const canvasX = x * blockSize;
+        const canvasY = y * blockSize;
 
-    ctx.fillStyle = config.colors.snake;
-    snapshot.segments.forEach((segment) => {
-      ctx.fillRect(
-        segment.x * gridSize,
-        segment.y * gridSize,
-        gridSize - 4,
-        gridSize - 4
-      );
-    });
-  }
+        ctx.fillRect(
+            canvasX + GRID_GAP / 2,
+            canvasY + GRID_GAP / 2,
+            blockSize - GRID_GAP,
+            blockSize - GRID_GAP
+        );
+    }
 
-  return { render };
+    /**
+     * Rendering function. Clears the canvas and draws the entire game state.
+     *
+     * @param {object} snapshot - The current game state snapshot (segments, apple).
+     * @param {number} gridSize - The pixel size of one unit in the game grid.
+     */
+    function render(snapshot, gridSize) {
+        clear();
+
+        ctx.fillStyle = colors.apple;
+        drawElement(snapshot.apple.x, snapshot.apple.y, gridSize);
+
+        ctx.fillStyle = colors.snake;
+        snapshot.segments.forEach((segment) => {
+            drawElement(segment.x, segment.y, gridSize);
+        });
+    }
+
+    return { render };
 }

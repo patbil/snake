@@ -1,31 +1,54 @@
+/**
+ * Creates the Keydown Handler module.
+ * This module listens for key presses and maps them to game engine actions.
+ *
+ * @param {object} engine - The game engine interface (must expose togglePause and setDirection).
+ * @returns {object} Public interface to start and stop the input listener.
+ */
 export function createKeydownHandler(engine) {
-  const handler = (e) => {
-    switch (e.keyCode) {
-      case 32:
-        engine.togglePause();
-        break;
-      case 37:
-        engine.setDirection(-1, 0);
-        break;
-      case 38:
-        engine.setDirection(0, -1);
-        break;
-      case 39:
-        engine.setDirection(1, 0);
-        break;
-      case 40:
-        engine.setDirection(0, 1);
-        break;
+    /**
+     * The core event handler function that processes key presses.
+     * @param {KeyboardEvent} e - The keyboard event object.
+     */
+    const handler = (event) => {
+        if (
+            [" ", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(
+                event.key
+            )
+        ) {
+            event.preventDefault();
+        }
+
+        switch (event.key) {
+            case " ":
+                engine.togglePause();
+                break;
+            case "ArrowLeft":
+            case "a":
+                engine.setDirection(-1, 0);
+                break;
+            case "ArrowUp":
+            case "w":
+                engine.setDirection(0, -1);
+                break;
+            case "ArrowRight":
+            case "d":
+                engine.setDirection(1, 0);
+                break;
+            case "ArrowDown":
+            case "s":
+                engine.setDirection(0, 1);
+                break;
+        }
+    };
+
+    function start() {
+        window.addEventListener("keydown", handler);
     }
-  };
 
-  function start() {
-    window.addEventListener("keydown", handler);
-  }
+    function stop() {
+        window.removeEventListener("keydown", handler);
+    }
 
-  function stop() {
-    window.removeEventListener("keydown", handler);
-  }
-
-  return { start, stop };
+    return { start, stop };
 }
