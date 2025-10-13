@@ -96,7 +96,7 @@ export function createStateManager(config) {
         emit("direction", { x, y });
     }
 
-    function togglePause() {
+    function togglePause(emitEvent) {
         state.pause = !state.pause;
 
         if (state.pause) {
@@ -106,7 +106,9 @@ export function createStateManager(config) {
             state.direction = state.prevDirection;
         }
 
-        emit("pause", state.pause);
+        if (emitEvent) {
+            emit("pause", state.pause);
+        }
     }
 
     function setApple(x, y) {

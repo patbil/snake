@@ -29,7 +29,7 @@ export function createKeydownHandler(engine) {
         }
 
         if (key === " ") {
-            engine.togglePause();
+            engine.togglePause(true);
             return;
         }
 

@@ -2,7 +2,7 @@
  * Global Configuration Settings for the Snake Game Engine.
  * This object centralizes all core constants, dimensions, speed modifiers, and colors.
  */
-export const config = {
+export const config = Object.freeze({
     /** The number of units (blocks) along one edge of the square grid (e.g., 25x25). */
     gridSize: 25,
     /** The initial number of segments the snake starts with. */
@@ -30,4 +30,4 @@ export const config = {
         background: "black",
         gridLine: "#333333",
     },
-};
+});

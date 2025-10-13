@@ -4,21 +4,112 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <title>Snake Game</title>
-        <link
-            rel="icon"
-            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>"
-        />
+        <link rel="icon" href="/assets/images/snake.svg" />
+        <link rel="stylesheet" href="/css/variables.css" />
         <link rel="stylesheet" href="/css/index.css" />
+        <link rel="stylesheet" href="/css/modal.css" />
         <link rel="stylesheet" href="/css/username-modal.css" />
+        <link rel="stylesheet" href="/css/settings-modal.css" />
+
     </head>
     <body>
-        <div id="settingsModal" class="modal"></div>
-        <div id="usernameModal" class="username-modal"></div>
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <h2>Game Settings ⚙️</h2>
+                <div class="setting-group">
+                    <h3>Game Rules</h3>
+                    <label for="setting-segments">Start Segments:</label>
+                    <input
+                        type="number"
+                        id="setting-segments"
+                        data-config="initialSegmentCount"
+                        min="2"
+                        max="10"
+                    />
+                    <label for="setting-levelstep">Level Step (Score):</label>
+                    <input
+                        type="number"
+                        id="setting-levelstep"
+                        data-config="levelStep"
+                        min="1"
+                        max="10"
+                    />
+                </div>
+
+                <div class="setting-group">
+                    <h3>Speed Control (ms)</h3>
+                    <label for="setting-startspeed">Start Speed:</label>
+                    <input
+                        type="number"
+                        id="setting-startspeed"
+                        data-config="initialSpeed"
+                        min="50"
+                        max="300"
+                    />
+                    <label for="setting-maxspeed"
+                        >Max Speed (min interval):</label
+                    >
+                    <input
+                        type="number"
+                        id="setting-maxspeed"
+                        data-config="maxSpeed"
+                        min="10"
+                        max="100"
+                    />
+                    <span class="setting-info">Lower ms = Faster Speed</span>
+                </div>
+
+                <div class="setting-group">
+                    <h3>Audio & Visuals</h3>
+                    <label for="setting-sound">Sound Enabled:</label>
+                    <input
+                        type="checkbox"
+                        id="setting-sound"
+                        data-config="sound.enabled"
+                    />
+                    <label for="setting-snakecolor">Snake Color:</label>
+                    <input
+                        type="color"
+                        id="setting-snakecolor"
+                        data-config="colors.snake"
+                    />
+                    <label for="setting-applecolor">Apple Color:</label>
+                    <input
+                        type="color"
+                        id="setting-applecolor"
+                        data-config="colors.apple"
+                    />
+                </div>
+
+                <button id="saveSettingsButton">Save & Close</button>
+                <button id="resetSettingsButton">Reset to Default</button>
+            </div>
+        </div>
+        <div id="usernameModal" class="modal">
+            <div class="modal-content">
+                <h2>Welcome, Snake Player! 🐍</h2>
+                <p>Please enter your name so we can save your high score.</p>
+
+                <span id="usernameError" class="error-message hidden">
+                    Name must be at least 2 characters long!
+                </span>
+
+                <input
+                    type="text"
+                    id="userNameInput"
+                    placeholder="Enter your name..."
+                    maxlength="20"
+                    required
+                />
+
+                <button id="startGameButton">Start Game!</button>
+            </div>
+        </div>
 
         <div class="container">
             <div class="game-section" role="main">
                 <div class="user-panel">
-                    <div class="user-info" id="username">👤</div>
+                    <div class="user-info" id="username"></div>
                     <button
                         class="settings-icon"
                         id="settings"

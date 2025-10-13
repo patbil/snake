@@ -1,0 +1,126 @@
+/* =========================================
+   1. Kontekst Modalu (zgodnie z Twoim .modal.css)
+   ========================================= */
+
+.modal-content {
+    /* Używamy mniejszej maksymalnej szerokości, aby zachęcić do pionowego scrollowania, jeśli to konieczne */
+    max-width: 400px;
+    padding: var(--section-padding);
+    background-color: var(--bg-modal);
+    color: var(--text-color);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--glass-shadow);
+    /* Używamy accentu dla tytułu, zamiast stałego #4caf50 */
+}
+
+.modal-content h2 {
+    color: var(--accent); 
+    margin-bottom: var(--ui-gap-lg);
+    font-family: var(--secondary-font); /* Użyj retro fontu dla tytułu */
+}
+
+/* =========================================
+   2. Kompaktowe Grupowanie Ustawień
+   ========================================= */
+
+.setting-group {
+    /* Usunięcie obramowania, aby zmniejszyć marginesy, jeśli używasz tła modal-content */
+    padding: 0; 
+    margin-bottom: var(--ui-gap-lg);
+    width: 100%; /* Upewnij się, że zajmuje całą dostępną szerokość */
+}
+
+.setting-group h3 {
+    color: var(--accent); /* Złoty zmieniamy na akcentowy zielony */
+    margin-top: 0;
+    /* Linia oddzielająca jest bardziej subtelna i używa kolorów tła */
+    border-bottom: 1px dashed var(--muted); 
+    padding-bottom: var(--ui-gap-sm);
+    margin-bottom: var(--ui-gap-md);
+    font-size: 1em;
+}
+
+/* --- Układ Rząd (Label + Input) --- */
+
+/* Użycie flexbox dla ustawienia w jednym rzędzie */
+.setting-group > label {
+    display: flex;
+    justify-content: space-between; /* Przestrzeń między etykietą a polem */
+    align-items: center;
+    margin-top: 0; /* Usuwamy zbędne marginesy pionowe */
+    margin-bottom: var(--ui-gap-sm); 
+    font-size: 0.95em;
+    font-weight: normal; /* Używamy jaśniejszego, czystszego fontu */
+    color: var(--text-dim);
+    padding-left: 5px; /* Delikatne wcięcie dla czytelności */
+}
+
+/* Dostosowanie szerokości inputów, by zmieściły się obok etykiety */
+.setting-group input[type="number"],
+.setting-group input[type="color"] {
+    width: 80px; /* Stała, mniejsza szerokość dla pola wprowadzania */
+    padding: 6px;
+    margin: 0;
+    border: var(--border-style); /* Użycie zmiennej dla spójnego obramowania */
+    border-radius: var(--radius-sm);
+    background-color: var(--card-bg); /* Lekko wyróżnione tło dla inputa */
+    color: var(--text-color);
+    text-align: right;
+    font-family: var(--primary-font);
+}
+
+/* Informacja o prędkości */
+.setting-info {
+    font-size: 0.8em;
+    color: var(--muted);
+    text-align: center;
+    margin-top: var(--ui-gap-sm);
+    margin-bottom: var(--ui-gap-md);
+}
+
+/* Checkbox (Sound Enabled) - wymaga dostosowania, aby był na końcu linii */
+.setting-group label[for="setting-sound"] input[type="checkbox"] {
+    margin: 0; /* Usuń domyślne marginesy */
+    transform: scale(1.1);
+    /* Checkbox sam w sobie jest mały, więc nie trzeba go skalować aż tak bardzo */
+}
+
+/* =========================================
+   3. Stylizacja Przycisków Akcji (dostosowanie do zmiennych)
+   ========================================= */
+
+.modal-content button {
+    width: 100%;
+    padding: var(--ui-gap-md);
+    margin-top: var(--ui-gap-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: var(--shadow-inset);
+}
+
+/* Styl dla przycisku ZAPISZ */
+#saveSettingsButton {
+    background-color: var(--accent); /* Użycie głównego akcentu */
+    color: var(--bg-1); /* Tekst w kolorze tła dla kontrastu */
+}
+
+#saveSettingsButton:hover {
+    background-color: #19e3a0; /* Lekko jaśniejszy akcent */
+    transform: translateY(-1px);
+}
+
+/* Styl dla przycisku RESET */
+#resetSettingsButton {
+    background-color: #f44336; /* Czerwony zostawiamy dla ostrzeżenia */
+    color: var(--text-color); 
+    margin-bottom: 0;
+}
+
+#resetSettingsButton:hover {
+    background-color: #da190b;
+    transform: translateY(-1px);
+}

@@ -18,6 +18,36 @@ export function createEngine(config) {
         initialized = true;
     }
 
+    function on(name, handler) {
+        stateManager.on(name, handler);
+    }
+
+    function setDirection(x, y) {
+        stateManager.setDirection(x, y);
+    }
+
+    function getDirection() {
+        return stateManager.snapshot().direction;
+    }
+
+    function togglePause(emitEvent) {
+        stateManager.togglePause(emitEvent);
+    }
+
+    function reinitialize() {
+        initialize();
+    }
+
+    /**
+     * Helper to handle collision events (e.g., hitting the body or wall).
+     * @returns {object} The state after Game Over reset.
+     */
+    function handleColision() {
+        stateManager.gameOver(); // Resets score, level, segments to default
+        const newState = stateManager.snapshot();
+        return newState;
+    }
+
     /**
      * Helper to handle snake movement, grid wrapping, and length management.
      * @param {object} state - Snapshot of the state before movement.
@@ -63,32 +93,6 @@ export function createEngine(config) {
     }
 
     /**
-     * Helper to handle collision events (e.g., hitting the body or wall).
-     * @returns {object} The state after Game Over reset.
-     */
-    function handleColision() {
-        stateManager.gameOver(); // Resets score, level, segments to default
-        const newState = stateManager.snapshot();
-        return newState;
-    }
-
-    function on(name, handler) {
-        stateManager.on(name, handler);
-    }
-
-    function setDirection(x, y) {
-        stateManager.setDirection(x, y);
-    }
-
-    function getDirection() {
-        return stateManager.snapshot().direction;
-    }
-
-    function togglePause() {
-        stateManager.togglePause();
-    }
-
-    /**
      * The core game loop tick function. Executes one step of the game logic.
      * @returns {object} The essential state data for the renderer.
      */
@@ -119,5 +123,5 @@ export function createEngine(config) {
         };
     }
 
-    return { on, tick, setDirection, getDirection, togglePause };
+    return { on, tick, setDirection, getDirection, togglePause, reinitialize };
 }

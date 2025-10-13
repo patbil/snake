@@ -28,7 +28,6 @@ export function createGame({ layoutManager, audioManager, config, canvas }) {
     function start() {
         loop.start();
         keydownHandler.start();
-        layoutManager.togglePause(false);
     }
 
     /**
@@ -40,12 +39,18 @@ export function createGame({ layoutManager, audioManager, config, canvas }) {
         keydownHandler.stop();
     }
 
+    function restart() {
+        stop();
+        engine.reinitialize();
+        start();
+    }
+
     /**
      * Toggles the pause state in the engine.
      * The engine will emit the 'pause' event, which is handled below.
      */
-    function togglePause() {
-        engine.togglePause();
+    function togglePause(emitEvent) {
+        engine.togglePause(emitEvent);
     }
     /**
      * Registers all event subscriptions from the core engine to external managers.
@@ -63,12 +68,12 @@ export function createGame({ layoutManager, audioManager, config, canvas }) {
     }
 
     function handleScore(score) {
-        layoutManager.updateScore(score);
+        layoutManager.setScore(score);
         audioManager.play("eat");
     }
 
     function handleLevel(level) {
-        layoutManager.updateLevel(level);
+        layoutManager.setLevel(level);
         audioManager.play("levelup");
 
         const { speed } = loop.snapshot();
@@ -79,7 +84,7 @@ export function createGame({ layoutManager, audioManager, config, canvas }) {
     function handleGameOver(snapshot) {
         layoutManager.gameOver(snapshot);
         audioManager.play("gameover");
-        stop();
+        loop.setSpeed(config.initialSpeed);
     }
 
     return {
