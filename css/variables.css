@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+:root {
+    --bg-1: #07121a;
+    --bg-2: #071a14;
+    --bg-modal: #333;
+    --accent: #15c78a;
+    --accent-dim: rgba(21, 199, 138, 0.08);
+    --muted: #9fb7a8;
+    --card-bg: rgba(255, 255, 255, 0.02);
+    --title-color: #dff8eb;
+    --text-color: #e7f8f0;
+    --text-dim: #e9fff5;
+
+    --primary-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial;
+    --secondary-font: "Press Start 2P", monospace;
+
+    --ui-gap-sm: 8px;
+    --ui-gap-md: 12px;
+    --ui-gap-lg: 16px;
+    --section-padding: 20px;
+    --section-border-radius: 14px;
+    --canvas-bg: #010807;
+
+    --glass-shadow: 0 18px 40px rgba(2, 8, 12, 0.6);
+    --border-style: 1px solid rgba(255, 255, 255, 0.02);
+    --border-style-accent: 1px solid var(--accent-dim);
+    --shadow-inset: inset 0 0 0 2px rgba(0, 0, 0, 0.25);
+    --radius-sm: 8px;
+    --radius-lg: 12px;
+}

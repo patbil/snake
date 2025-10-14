@@ -1,0 +1,89 @@
+.setting-group {
+    padding: 0;
+    margin-bottom: var(--ui-gap-sm);
+    width: 100%;
+}
+
+.setting-group h3 {
+    color: var(--accent);
+    border-bottom: 1px dashed var(--muted);
+    padding-bottom: var(--ui-gap-sm);
+    margin-bottom: var(--ui-gap-md);
+    font-size: 1em;
+}
+
+.setting-control {
+    display: flex;
+    flex-direction: column;
+    padding: 0.25em 0;
+    gap: var(--ui-gap-sm);
+    justify-content: center;
+}
+
+.control-row {
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.setting-group input[type="number"] {
+    width: 80px;
+    padding: var(--ui-gap-sm);
+    margin: 0;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    text-align: right;
+    font-family: var(--primary-font);
+}
+
+.setting-group input[type="color"] {
+    padding: 0;
+}
+
+.setting-info {
+    font-size: 0.8em;
+    color: var(--muted);
+    text-align: center;
+    margin-top: var(--ui-gap-sm);
+    margin-bottom: var(--ui-gap-md);
+}
+
+.setting-group label[for="setting-sound"] input[type="checkbox"] {
+    margin: 0;
+}
+
+.modal-content button {
+    width: 50%;
+    padding: var(--ui-gap-sm);
+    margin-top: var(--ui-gap-lg);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: var(--shadow-inset);
+}
+
+#saveSettingsButton {
+    background-color: var(--accent);
+    color: var(--bg-1);
+}
+
+#saveSettingsButton:hover {
+    background-color: #19e3a0;
+    transform: translateY(-1px);
+}
+
+#resetSettingsButton {
+    background-color: #f44336;
+    color: var(--text-color);
+    margin-bottom: 0;
+}
+
+#resetSettingsButton:hover {
+    background-color: #da190b;
+    transform: translateY(-1px);
+}

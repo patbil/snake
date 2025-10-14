@@ -1,64 +1,203 @@
 <!DOCTYPE html>
 <html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Wąż Papiszona</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/css/index.css" />
-  </head>
-  <body>
-    <div class="container">
-      <div class="game-section" role="main">
-        <div class="user-panel">
-          <div class="user-info" id="username">👤 Papiszon</div>
-          <button
-            class="settings-icon"
-            id="settings"
-            aria-label="Ustawienia"
-            title="Ustawienia"
-          >
-            ⚙️
-          </button>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Snake Game</title>
+        <link rel="icon" href="/assets/images/snake.svg" />
+        <link rel="stylesheet" href="/css/variables.css" />
+        <link rel="stylesheet" href="/css/index.css" />
+        <link rel="stylesheet" href="/css/modal.css" />
+        <link rel="stylesheet" href="/css/username-modal.css" />
+        <link rel="stylesheet" href="/css/settings-modal.css" />
+    </head>
+    <body>
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <h2>Game Settings ⚙️</h2>
+                <div class="setting-group">
+                    <h3>Game Rules</h3>
+                    <div class="setting-control">
+                        <label for="setting-segments">Start Segments:</label>
+                        <input
+                            type="number"
+                            id="setting-segments"
+                            data-config="initialSegmentCount"
+                            min="2"
+                            max="10"
+                        />
+                    </div>
+
+                    <div class="setting-control">
+                        <label for="setting-levelstep"
+                            >Level Step (Score):</label
+                        >
+                        <input
+                            type="number"
+                            id="setting-levelstep"
+                            data-config="levelStep"
+                            min="1"
+                            max="10"
+                        />
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h3>Speed Control (ms)</h3>
+                    <div class="setting-control">
+                        <label for="setting-startspeed">Start Speed:</label>
+                        <input
+                            type="number"
+                            id="setting-startspeed"
+                            data-config="initialSpeed"
+                            min="50"
+                            max="300"
+                        />
+                    </div>
+                    <div class="setting-control">
+                        <label for="setting-maxspeed"
+                            >Max Speed (min interval):</label
+                        >
+                        <input
+                            type="number"
+                            id="setting-maxspeed"
+                            data-config="maxSpeed"
+                            min="10"
+                            max="100"
+                        />
+                    </div>
+                    <span class="setting-info">Lower ms = Faster Speed</span>
+                </div>
+
+                <div class="setting-group">
+                    <h3>Audio & Visuals</h3>
+                    <div class="setting-control control-row">
+                        <label for="setting-sound">Sound Enabled:</label>
+                        <input
+                            type="checkbox"
+                            id="setting-sound"
+                            data-config="sound.enabled"
+                        />
+                    </div>
+                    <div class="setting-control control-row">
+                        <label for="setting-snakecolor ">Snake Color:</label>
+                        <input
+                            type="color"
+                            id="setting-snakecolor"
+                            data-config="colors.snake"
+                        />
+                    </div>
+                    <div class="setting-control control-row">
+                        <label for="setting-applecolor ">Apple Color:</label>
+                        <input
+                            type="color"
+                            id="setting-applecolor"
+                            data-config="colors.apple"
+                        />
+                    </div>
+                </div>
+
+                <button id="saveSettingsButton">Save & Close</button>
+                <button id="resetSettingsButton">Reset to Default</button>
+            </div>
+        </div>
+        <div id="usernameModal" class="modal">
+            <div class="modal-content">
+                <h2>Welcome, Snake Player! 🐍</h2>
+                <p>Please enter your name so we can save your high score.</p>
+
+                <div class="name-form">
+                    <span id="usernameError" class="error-message hidden">
+                        Name must be at least 2 characters long!
+                    </span>
+
+                    <input
+                        type="text"
+                        id="userNameInput"
+                        placeholder="Enter your name..."
+                        maxlength="20"
+                        required
+                    />
+
+                    <button id="startGameButton">Start Game!</button>
+                </div>
+            </div>
         </div>
 
-        <h1>🐍 Snake 🐍</h1>
-        <div class="game-container">
-          <canvas
-            id="canvas"
-            width="725"
-            height="725"
-            aria-label="Plansza gry"
-          ></canvas>
-        </div>
-        <div class="scoreboard" aria-live="polite">
-          Wynik: <span id="score">0</span>
-        </div>
-        <div class="levelboard" aria-live="polite">
-          Level: <span id="level">0</span>
-        </div>
-        <div class="controls">
-          Sterowanie: ⬅️ ⬆️ ⬇️ ➡️ | Spacja = start/pauza
-        </div>
-      </div>
+        <div id="stateModal" class="modal">
+            <div class="modal-content">
+                <div
+                    id="pauseElements"
+                    class="modal-state-group hidden"
+                >
+                    <p>Game paused.</p>
+                    <p>Press **SPACE** or click to resume.</p>
+                </div>
 
-      <div class="leaderboard">
-        <h2>🏆 Ranking</h2>
-        <ul>
-          <li><strong>Papiszon</strong> <span>1234</span></li>
-          <li><strong>Balonik166</strong> <span>1010</span></li>
-          <li><strong>Indor</strong> <span>880</span></li>
-          <li><strong>Kazimierz</strong> <span>765</span></li>
-          <li><strong>Anonim</strong> <span>500</span></li>
-        </ul>
-      </div>
-    </div>
+                <div
+                    id="gameoverElements"
+                    class="modal-state-group hidden"
+                >
+                    <p>The rules defeated you!</p>
 
-    <div id="settingsModal" class="modal"></div>
+                    <div class="score-summary">
+                        <p>Your Score: <strong id="finalScore"></strong></p>
+                        <p>Level: <strong id="finalLevel"></strong></p>
+                    </div>
 
-    <script src="/javascript/index.js" type="module"></script>
-  </body>
+                    <button id="restartButton" class="btn btn-primary">
+                        PLAY AGAIN
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="game-section" role="main">
+                <div class="user-panel">
+                    <div class="user-info" id="username"></div>
+                    <button
+                        class="settings-icon"
+                        id="settings"
+                        aria-label="Ustawienia"
+                        title="Ustawienia"
+                    >
+                        ⚙️
+                    </button>
+                </div>
+
+                <h1>Snake</h1>
+                <div class="game-container">
+                    <canvas
+                        id="canvas"
+                        width="725"
+                        height="725"
+                        aria-label="Game board"
+                    ></canvas>
+                </div>
+                <div class="scoreboard" aria-live="polite">
+                    Score: <span id="score">0</span>
+                </div>
+                <div class="levelboard" aria-live="polite">
+                    Level: <span id="level">0</span>
+                </div>
+                <div class="controls">
+                    Controls: ⬅️ ⬆️ ⬇️ ➡️ | Space = start/pause
+                </div>
+            </div>
+
+            <div class="leaderboard">
+                <h2>🏆 Ranking</h2>
+                <ul>
+                    <li><strong>User 1</strong> <span>1234</span></li>
+                    <li><strong>User 2</strong> <span>1010</span></li>
+                    <li><strong>User 3</strong> <span>880</span></li>
+                    <li><strong>User 4</strong> <span>765</span></li>
+                    <li><strong>User 5</strong> <span>500</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <script src="/javascript/index.js" type="module"></script>
+    </body>
 </html>

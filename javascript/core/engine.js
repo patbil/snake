@@ -1,75 +1,124 @@
 import { createStateManager } from "./state.js";
 
-export function createEngine(config, initialized = false) {
-  const stateManager = createStateManager(config);
+/**
+ * Creates the Game Engine module.
+ * This function acts as a controller, orchestrating the game loop ('tick')
+ * and managing interactions between the game state and logic.
+ *
+ * @param {object} settings - The global game settingsuration object.
+ * @param {object} eventBus - The central Event Bus used by the engine to emit state change notifications.
+ * @returns {object} The public engine interface.
+ */
+export function createEngine(settings, eventBus) {
+    const stateManager = createStateManager(settings, eventBus);
+    const gridSize = settings.gridSize;
+    let initialized = false;
 
-  function initialize() {
-    stateManager.setDefault();
-    initialized = true;
-  }
-
-  function tick() {
-    if (!initialized) initialize();
-
-    const gridSize = config.gridSize;
-    let before = stateManager.snapshot();
-    const events = { appleEaten: false, levelUp: false };
-
-    if (before.direction.x !== 0 || before.direction.y !== 0) {
-      let newX = before.segments[0].x + before.direction.x;
-      let newY = before.segments[0].y + before.direction.y;
-
-      if (newX < 0) newX = gridSize - 1;
-      if (newY < 0) newY = gridSize - 1;
-      if (newX > gridSize - 1) newX = 0;
-      if (newY > gridSize - 1) newY = 0;
-
-      stateManager.addHead(newX, newY);
-
-      let after = stateManager.snapshot();
-      while (after.segments.length > config.startSegmentCount + after.score) {
-        stateManager.removeTail();
-        after = stateManager.snapshot();
-      }
-      before = after; // keep latest for subsequent checks
+    function initialize() {
+        setDefault();
+        initialized = true;
     }
 
-    // check apple collision using latest state snapshot
-    if (
-      before.segments[0].x == before.apple.x &&
-      before.segments[0].y == before.apple.y
-    ) {
-      stateManager.setApple(
-        Math.floor(Math.random() * gridSize),
-        Math.floor(Math.random() * gridSize)
-      );
-
-      stateManager.increaseScore();
-      events.appleEaten = true;
-
-      const afterScore = stateManager.snapshot().score;
-      if (afterScore % config.levelStep === 0) {
-        stateManager.increaseLevel();
-        events.levelUp = true;
-      }
+    function togglePause({ emitEvent }) {
+        stateManager.togglePause({ emitEvent });
     }
 
-    const latest = stateManager.snapshot();
-    const snapshot = {
-      segments: latest.segments,
-      apple: latest.apple,
-      score: latest.score,
-      level: latest.level,
-    };
+    function setDefault() {
+        stateManager.setDefault();
+    }
 
-    return { snapshot, events };
-  }
+    function setDirection(dx, dy) {
+        const currentDir = stateManager.snapshot().direction;
+        if (dx + currentDir.x === 0 && dy + currentDir.y === 0) {
+            return;
+        }
+        stateManager.setDirection(dx, dy);
+    }
 
-  function setDirection(x, y) {
-    stateManager.setDirection(x, y);
-  }
+    /**
+     * Helper to handle collision events (e.g., hitting the body or wall).
+     * @returns {object} The state after Game Over reset.
+     */
+    function handleColision() {
+        stateManager.gameOver(); // Resets score, level, segments to default
+        const newState = stateManager.snapshot();
+        return newState;
+    }
 
-  function togglePause() {}
+    /**
+     * Helper to handle snake movement, grid wrapping, and length management.
+     * @param {object} state - Snapshot of the state before movement.
+     * @returns {object} The new state after movement and tail removal.
+     */
+    function handleMovement({ segments, direction }) {
+        const newX = (segments[0].x + direction.x + gridSize) % gridSize;
+        const newY = (segments[0].y + direction.y + gridSize) % gridSize;
 
-  return { tick, setDirection, togglePause };
+        stateManager.addHead(newX, newY);
+        let newState = stateManager.snapshot();
+
+        while (
+            newState.segments.length >
+            settings.initialSegmentCount + newState.score
+        ) {
+            stateManager.removeTail();
+            newState = stateManager.snapshot();
+        }
+
+        return newState;
+    }
+
+    /**
+     * Helper to handle apple consumption, scoring, and level progression.
+     * @returns {object} The new state after consumption and score updates.
+     */
+    function handleConsumption() {
+        stateManager.setApple(
+            Math.floor(Math.random() * gridSize),
+            Math.floor(Math.random() * gridSize)
+        );
+
+        stateManager.increaseScore();
+        let newState = stateManager.snapshot();
+
+        if (newState.score % settings.levelStep === 0) {
+            stateManager.increaseLevel();
+            newState = stateManager.snapshot();
+        }
+
+        return newState;
+    }
+
+    /**
+     * The core game loop tick function. Executes one step of the game logic.
+     * @returns {object} The essential state data for the renderer.
+     */
+    function tick() {
+        if (!initialized) initialize();
+
+        let state = stateManager.snapshot();
+
+        if (state.direction.x !== 0 || state.direction.y !== 0) {
+            state = handleMovement(state);
+        }
+
+        const [head, ...body] = state.segments;
+        const colision = body.some(
+            (segment) => segment.x === head.x && segment.y === head.y
+        );
+        const consumption =
+            head.x === state.apple.x && head.y === state.apple.y;
+
+        if (colision) state = handleColision(state);
+        if (consumption) state = handleConsumption();
+
+        return {
+            segments: state.segments,
+            apple: state.apple,
+            score: state.score,
+            level: state.level,
+        };
+    }
+
+    return { tick, setDirection, togglePause, setDefault };
 }
