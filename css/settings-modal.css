@@ -30,7 +30,7 @@
     width: 80px;
     padding: var(--ui-gap-sm);
     margin: 0;
-    border: var(--border-style-accent);
+    border: 1px solid var(--accent);
     border-radius: var(--radius-sm);
     background-color: var(--card-bg);
     color: var(--text-color);

@@ -2,14 +2,21 @@
  * Creates the Layout Manager module.
  * This module is responsible for direct manipulation of the DOM.
  *
- * @param {object} settingsCallbacks - An object containing callback functions for settings persistence.
+ * @param {object} settingsCallbacks - An object containing callback functions for settings persistence and game control.
  * @param {function(): object} settingsCallbacks.getSettings - Function to get the current settings object.
- * @param {function(string): void} settingsCallbacks.onOpen - Function to call when a modal is opening.
+ * @param {function(string): void} settingsCallbacks.onOpen - Function to call when a modal is opening (e.g., to pause the game).
  * @param {function(object): void} settingsCallbacks.onSave - Function to call when settings are saved.
  * @param {function(): object} settingsCallbacks.onReset - Function to call when settings are reset to default.
+ * @param {function(): void} settingsCallbacks.onRestart - Function to call when the game needs to be restarted.
  * @returns {object} The public interface for interacting with the game layout.
  */
-export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
+export function createLayoutManager({
+    getSettings,
+    onOpen,
+    onSave,
+    onReset,
+    onRestart,
+}) {
     const elements = getElements();
 
     function getElements() {
@@ -26,12 +33,17 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
             usernameError: document.getElementById("usernameError"),
             saveSettingsButton: document.getElementById("saveSettingsButton"),
             resetSettingsButton: document.getElementById("resetSettingsButton"),
+            pauseElements: document.getElementById("pauseElements"),
+            gameoverElements: document.getElementById("gameoverElements"),
+            restartButton: document.getElementById("restartButton"),
+            finalLevel: document.getElementById("finalLevel"),
+            finalScore: document.getElementById("finalScore"),
         };
     }
 
-    function toggleModalVisibility(modalElement, isVisible) {
-        if (modalElement) {
-            modalElement.style.display = isVisible ? "flex" : "none";
+    function toggleElementVisibility(htmlElement, isVisible, style = "flex") {
+        if (htmlElement) {
+            htmlElement.style.display = isVisible ? style : "none";
         }
     }
 
@@ -39,77 +51,6 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
         return path.split(".").reduce((acc, part) => acc && acc[part], obj);
     }
 
-    /**
-     * Shows the username input modal and waits for a validated username input.
-     * @returns {Promise<string>} A Promise that resolves with the validated username string.
-     */
-    function showUsernameModal() {
-        onOpen("username");
-
-        return new Promise((resolve) => {
-            const handleStart = () => {
-                const username = elements.userNameInput.value.trim();
-                if (username.length < 2) {
-                    elements.usernameError.textContent =
-                        "Name must be at least 2 characters long!";
-                    elements.usernameError.style.display = "block";
-                    return;
-                }
-
-                elements.usernameError.style.display = "none";
-                toggleModalVisibility(elements.usernameModal, false);
-
-                elements.startGameButton.removeEventListener(
-                    "click",
-                    handleStart
-                );
-                elements.userNameInput.removeEventListener(
-                    "keydown",
-                    handleKeydown
-                );
-
-                resolve(username);
-            };
-
-            const handleKeydown = (e) => {
-                if (e.key === "Enter") handleStart();
-            };
-
-            toggleModalVisibility(elements.usernameModal, true);
-            elements.startGameButton.addEventListener("click", handleStart);
-            elements.userNameInput.addEventListener("keydown", handleKeydown);
-            elements.userNameInput.focus();
-        });
-    }
-
-    function showSettingsModal() {
-        onOpen("settings");
-        syncSettingsToModal(getSettings());
-        toggleModalVisibility(elements.settingsModal, true);
-    }
-    /**
-     * Fills the settings modal fields with the current configuration values.
-     * @param {object} settings - The configuration object to load into the fields.
-     */
-    function syncSettingsToModal(settings) {
-        document
-            .querySelectorAll("#settingsModal [data-config]")
-            .forEach((input) => {
-                const path = input.dataset.config;
-                const value = getValueFromPath(settings, path);
-
-                if (input.type === "checkbox") {
-                    input.checked = value;
-                } else {
-                    input.value = value;
-                }
-            });
-    }
-
-    /**
-     * Gathers current values from the settings modal and passes them to the onSave callback.
-     * The settings are gathered as a flat object (using dot-notation keys).
-     */
     function handleSettingsSave() {
         const settingsToSave = {};
 
@@ -131,23 +72,123 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
             });
 
         onSave(settingsToSave);
-        toggleModalVisibility(elements.settingsModal, false);
+        toggleElementVisibility(elements.settingsModal, false);
     }
 
-    /**
-     * Handles resetting settings to default values.
-     */
     function handleSettingsReset() {
         if (
             confirm("Are you sure you want to reset all settings to default?")
         ) {
             onReset();
-            toggleModalVisibility(elements.settingsModal, false);
         }
     }
 
-    function resetAll() {
+    function handleRestartGame() {
+        onRestart();
+    }
 
+    function attachEventListeners() {
+        if (elements.settingsButton) {
+            elements.settingsButton.addEventListener(
+                "click",
+                showSettingsModal
+            );
+        }
+
+        if (elements.restartButton) {
+            elements.restartButton.addEventListener("click", handleRestartGame);
+        }
+
+        if (elements.saveSettingsButton) {
+            elements.saveSettingsButton.addEventListener(
+                "click",
+                handleSettingsSave
+            );
+        }
+
+        if (elements.resetSettingsButton) {
+            elements.resetSettingsButton.addEventListener(
+                "click",
+                handleSettingsReset
+            );
+        }
+    }
+
+    /**
+     * Shows the username input modal and waits for a validated username input.
+     * @returns {Promise<string>} A Promise that resolves with the validated username string.
+     */
+    function showUsernameModal() {
+        onOpen("username");
+
+        return new Promise((resolve) => {
+            const handleStart = () => {
+                const username = elements.userNameInput.value.trim();
+                if (username.length < 2) {
+                    elements.usernameError.textContent =
+                        "Name must be at least 2 characters long!";
+                    toggleElementVisibility(
+                        elements.usernameError,
+                        true,
+                        "block"
+                    );
+                    return;
+                }
+
+                toggleElementVisibility(elements.usernameError, false);
+                elements.startGameButton.removeEventListener(
+                    "click",
+                    handleStart
+                );
+                elements.userNameInput.removeEventListener(
+                    "keydown",
+                    handleKeydown
+                );
+
+                toggleElementVisibility(elements.usernameModal, false);
+                resolve(username);
+            };
+
+            const handleKeydown = (e) => {
+                if (e.key === "Enter") handleStart();
+            };
+
+            toggleElementVisibility(elements.usernameModal, true);
+            elements.startGameButton.addEventListener("click", handleStart);
+            elements.userNameInput.addEventListener("keydown", handleKeydown);
+            elements.userNameInput.focus();
+        });
+    }
+
+    function showSettingsModal() {
+        onOpen("settings");
+        syncSettingsToModal(getSettings());
+        toggleElementVisibility(elements.settingsModal, true);
+    }
+
+    function syncSettingsToModal(settings) {
+        document
+            .querySelectorAll("#settingsModal [data-config]")
+            .forEach((input) => {
+                const path = input.dataset.config;
+                const value = getValueFromPath(settings, path);
+
+                if (input.type === "checkbox") {
+                    input.checked = value;
+                } else {
+                    input.value = value;
+                }
+            });
+    }
+
+    function resetAll() {
+        setLevel(0);
+        setScore(0);
+        toggleElementVisibility(elements.pauseElements, false);
+        toggleElementVisibility(elements.gameoverElements, false);
+        toggleElementVisibility(elements.stateModal, false);
+        toggleElementVisibility(elements.usernameModal, false);
+        toggleElementVisibility(elements.settingsModal, false);
     }
 
     function setScore(score) {
@@ -166,32 +207,18 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
     }
 
     function togglePause(isPaused) {
-        // Logika wyświetlania pauzy (teraz obsługiwana przez modalManager z zewnętrznego modułu)
-        // W tym module layoutManager może dodawać/usuwać klasę 'game-paused' z body/canvas.
+        toggleElementVisibility(elements.stateModal, isPaused);
+        toggleElementVisibility(elements.pauseElements, isPaused, "block");
     }
 
     function gameOver(snapshot) {
-        setLevel(snapshot.level);
-        setScore(snapshot.score);
+        toggleElementVisibility(elements.stateModal, true);
+        toggleElementVisibility(elements.gameoverElements, true, "block");
+        elements.finalLevel.textContent = snapshot.level;
+        elements.finalScore.textContent = snapshot.score;
     }
 
-    if (elements.settingsButton) {
-        elements.settingsButton.addEventListener("click", showSettingsModal);
-    }
-
-    if (elements.saveSettingsButton) {
-        elements.saveSettingsButton.addEventListener(
-            "click",
-            handleSettingsSave
-        );
-    }
-
-    if (elements.resetSettingsButton) {
-        elements.resetSettingsButton.addEventListener(
-            "click",
-            handleSettingsReset
-        );
-    }
+    attachEventListeners();
 
     return {
         setLevel,

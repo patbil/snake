@@ -1,3 +1,5 @@
+import { EVENT_DOMAINS } from "./events-definition.js";
+
 /**
  * Creates the Keydown Handler module.
  * This module listens for global key presses and maps them directly to
@@ -25,14 +27,14 @@ export function createKeydownHandler(eventBus) {
         }
 
         if (key === " ") {
-            eventBus.emit("COMMAND_PAUSE", { emitEvent: true });
+            eventBus.emit(EVENT_DOMAINS.MOVE.TOGGLE_PAUSE, { emitEvent: true });
             return;
         }
 
         const vector = directionMap[key];
         if (vector) {
             const [x, y] = vector;
-            eventBus.emit("INPUT_MOVE", { x, y });
+            eventBus.emit(EVENT_DOMAINS.MOVE.CHANGE_DIRECTION, { x, y });
         }
     };
 

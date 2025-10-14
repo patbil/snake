@@ -1,0 +1,16 @@
+export const EVENT_DOMAINS = {
+    STATE: {
+        DIRECTION: "STATE:DIRECTION",
+        PAUSE: "STATE:PAUSE",
+        APPLE: "STATE:APPLE",
+        SCORE: "STATE:SCORE_UPDATED",
+        LEVEL_UP: "STATE:LEVEL_UP",
+        GAME_OVER: "STATE:GAME_OVER",
+        SEGMENTS: "STATE:SEGMENTS",
+        RESET: "STATE:RESET",
+    },
+    MOVE: {
+        TOGGLE_PAUSE: "MOVE:TOGGLE_PAUSE",
+        CHANGE_DIRECTION: "MOVE:CHANGE_DIRECTION",
+    },
+};

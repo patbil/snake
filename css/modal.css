@@ -4,7 +4,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
     z-index: 999;
@@ -15,7 +15,8 @@
     background-color: var(--bg-modal);
     color: var(--text-color);
     padding: var(--section-padding);
-    border: 1px solid #888;
+    border: 2px solid var(--accent);
+
     border-radius: var(--radius-sm);
     max-width: 500px;
     width: 80%;
@@ -31,7 +32,5 @@
 }
 
 .error-message {
-    display: none;
-    color: rgba(150,40,40,1)
+    color: rgba(150, 40, 40, 1);
 }
-

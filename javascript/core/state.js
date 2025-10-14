@@ -1,3 +1,5 @@
+import { EVENT_DOMAINS } from "./events-definition.js";
+
 /**
  * State Manager Factory for the Snake game.
  * Encapsulates all game state, manages mutations, and utilizes the Event Emitter pattern.
@@ -49,17 +51,17 @@ export function createStateManager(settings, eventBus) {
         state.prevDirection = { x: 0, y: 0 };
         state.apple = { x: startPos + 5, y: startPos + 5 };
 
-        eventBus.emit("reset", snapshot());
+        eventBus.emit(EVENT_DOMAINS.STATE.RESET, snapshot());
     }
 
     function addHead(x, y) {
         state.segments.unshift({ x, y });
-        eventBus.emit("state", snapshot());
+        eventBus.emit(EVENT_DOMAINS.STATE.SEGMENTS, snapshot());
     }
 
     function removeTail() {
         state.segments.pop();
-        eventBus.emit("state", snapshot());
+        eventBus.emit(EVENT_DOMAINS.STATE.SEGMENTS, snapshot());
     }
 
     function setDirection(x, y) {
@@ -75,7 +77,7 @@ export function createStateManager(settings, eventBus) {
         }
 
         state.direction = { x, y };
-        eventBus.emit("direction", { x, y });
+        eventBus.emit(EVENT_DOMAINS.STATE.DIRECTION, { x, y });
     }
 
     function togglePause({ emitEvent }) {
@@ -89,29 +91,29 @@ export function createStateManager(settings, eventBus) {
         }
 
         if (emitEvent) {
-            eventBus.emit("pause", state.pause);
+            eventBus.emit(EVENT_DOMAINS.STATE.PAUSE, state.pause);
         }
     }
 
     function setApple(x, y) {
         state.apple = { x, y };
-        eventBus.emit("apple", { x, y });
+        eventBus.emit(EVENT_DOMAINS.STATE.APPLE, { x, y });
     }
 
     function increaseScore() {
         state.score += 1;
-        eventBus.emit("score", state.score);
+        eventBus.emit(EVENT_DOMAINS.STATE.SCORE, state.score);
     }
 
     function increaseLevel() {
         state.level += 1;
-        eventBus.emit("level", state.level);
+        eventBus.emit(EVENT_DOMAINS.STATE.LEVEL_UP, state.level);
     }
 
     function gameOver() {
         state.pause = true;
         state.direction = { x: 0, y: 0 };
-        eventBus.emit("gameover", snapshot());
+        eventBus.emit(EVENT_DOMAINS.STATE.GAME_OVER, snapshot());
     }
 
     return {

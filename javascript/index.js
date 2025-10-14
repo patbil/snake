@@ -1,16 +1,15 @@
 import { createGame } from "./core/game.js";
-import { createAudioManager } from "./core/audio.js";
 import { createLayoutManager } from "./layout/layout.js";
 import { createSettingsManager } from "./core/settings.js";
 
 window.onload = function () {
     const settingsManager = createSettingsManager();
     const settings = settingsManager.getSettings();
-    const audioManager = createAudioManager(settings);
+
     const layoutManager = createLayoutManager({
         getSettings: settingsManager.getSettings,
         onOpen: (type) => {
-            if (type === 'settings') game.togglePause({ emitEvent: true })
+            if (type === "settings") game.togglePause({ emitEvent: false });
         },
         onSave: (settings) => {
             settingsManager.saveSettings(settings);
@@ -19,13 +18,14 @@ window.onload = function () {
         onReset: () => {
             settingsManager.restoreSettings();
             game.restart();
-
+        },
+        onRestart: () => {
+            game.restart();
         },
     });
 
     const game = createGame({
         layoutManager,
-        audioManager,
         settings,
         canvas: document.getElementById("canvas"),
     });

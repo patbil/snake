@@ -1,19 +1,22 @@
 import { createLoop } from "./loop.js";
 import { createEngine } from "./engine.js";
-import { createRenderer } from "./renderer.js";
-import { createKeydownHandler } from "./handler.js";
 import { createEventBus } from "./event.js";
+import { createRenderer } from "./renderer.js";
+import { createAudioManager } from "./audio.js";
+import { createKeydownHandler } from "./handler.js";
+import { EVENT_DOMAINS } from "./events-definition.js";
 
 /**
  * Creates and manages the full lifecycle of the Snake game (start, stop, pause, restart).
  * Maintains encapsulation of the core game state.
- * @param {object} dependencies - Dependencies: layoutManager, audioManager, settings, canvas.
+ * @param {object} dependencies - Dependencies: canvas, layoutManager, settings.
  * @returns {object} The public control interface.
  */
-export function createGame({ layoutManager, audioManager, settings, canvas }) {
+export function createGame({ canvas, layoutManager, settings }) {
     const eventBus = createEventBus();
     const engine = createEngine(settings, eventBus);
     const renderer = createRenderer(canvas, settings);
+    const audioManager = createAudioManager(settings);
     const keydownHandler = createKeydownHandler(eventBus);
 
     const loop = createLoop(() => {
@@ -63,13 +66,13 @@ export function createGame({ layoutManager, audioManager, settings, canvas }) {
      * Registers all event subscriptions from the core engine to external managers.
      */
     function registerEvents() {
-        eventBus.on("pause", handlePause);
-        eventBus.on("score", handleScore);
-        eventBus.on("level", handleLevel);
-        eventBus.on("gameover", handleGameOver);
-        eventBus.on("reset", handleReset);
-        eventBus.on("COMMAND_PAUSE", togglePause);
-        eventBus.on("INPUT_MOVE", handleMove);
+        eventBus.on(EVENT_DOMAINS.STATE.PAUSE, handlePause);
+        eventBus.on(EVENT_DOMAINS.STATE.SCORE, handleScore);
+        eventBus.on(EVENT_DOMAINS.STATE.LEVEL_UP, handleLevel);
+        eventBus.on(EVENT_DOMAINS.STATE.GAME_OVER, handleGameOver);
+        eventBus.on(EVENT_DOMAINS.STATE.RESET, handleReset);
+        eventBus.on(EVENT_DOMAINS.MOVE.TOGGLE_PAUSE, togglePause);
+        eventBus.on(EVENT_DOMAINS.MOVE.CHANGE_DIRECTION, handleMove);
     }
 
     function handleMove(dir) {
