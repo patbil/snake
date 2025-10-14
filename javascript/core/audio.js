@@ -6,14 +6,11 @@
  * @returns {object} The public interface for initializing and playing sounds.
  */
 export function createAudioManager(settings) {
-    if (!settings.sound.enabled) return { init: () => {}, play: () => {} };
-
     const audioCache = {};
     const volume = settings.sound.volume;
 
     function loadAudio(path) {
         if (audioCache[path]) return audioCache[path];
-
         const audio = new Audio(path);
         audio.volume = volume;
         audioCache[path] = audio;
@@ -25,6 +22,8 @@ export function createAudioManager(settings) {
      * @param {string} soundName - The name of the sound.
      */
     function play(soundName) {
+        if (!settings.sound.enabled) return;
+
         const path = settings.sound[soundName];
         if (!path) return;
 

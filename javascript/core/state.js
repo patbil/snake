@@ -109,7 +109,8 @@ export function createStateManager(settings, eventBus) {
     }
 
     function gameOver() {
-        setDefault();
+        state.pause = true;
+        state.direction = { x: 0, y: 0 };
         eventBus.emit("gameover", snapshot());
     }
 

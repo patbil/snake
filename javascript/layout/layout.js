@@ -1,8 +1,10 @@
 /**
  * Creates the Layout Manager module.
+ * This module is responsible for direct manipulation of the DOM.
+ *
  * @param {object} settingsCallbacks - An object containing callback functions for settings persistence.
  * @param {function(): object} settingsCallbacks.getSettings - Function to get the current settings object.
- * @param {function(string): void} settingsCallbacks.onOpen - Function to call when modal is opening.
+ * @param {function(string): void} settingsCallbacks.onOpen - Function to call when a modal is opening.
  * @param {function(object): void} settingsCallbacks.onSave - Function to call when settings are saved.
  * @param {function(): object} settingsCallbacks.onReset - Function to call when settings are reset to default.
  * @returns {object} The public interface for interacting with the game layout.
@@ -10,10 +12,6 @@
 export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
     const elements = getElements();
 
-    /**
-     * Gathers and caches references to all necessary DOM elements.
-     * @returns {object} An object containing references to the elements.
-     */
     function getElements() {
         return {
             usernameDisplay: document.getElementById("username"),
@@ -29,6 +27,16 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
             saveSettingsButton: document.getElementById("saveSettingsButton"),
             resetSettingsButton: document.getElementById("resetSettingsButton"),
         };
+    }
+
+    function toggleModalVisibility(modalElement, isVisible) {
+        if (modalElement) {
+            modalElement.style.display = isVisible ? "flex" : "none";
+        }
+    }
+
+    function getValueFromPath(obj, path) {
+        return path.split(".").reduce((acc, part) => acc && acc[part], obj);
     }
 
     /**
@@ -49,7 +57,7 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
                 }
 
                 elements.usernameError.style.display = "none";
-                elements.usernameModal.style.display = "none";
+                toggleModalVisibility(elements.usernameModal, false);
 
                 elements.startGameButton.removeEventListener(
                     "click",
@@ -67,30 +75,28 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
                 if (e.key === "Enter") handleStart();
             };
 
-            elements.usernameModal.style.display = "flex";
+            toggleModalVisibility(elements.usernameModal, true);
             elements.startGameButton.addEventListener("click", handleStart);
             elements.userNameInput.addEventListener("keydown", handleKeydown);
             elements.userNameInput.focus();
         });
     }
 
+    function showSettingsModal() {
+        onOpen("settings");
+        syncSettingsToModal(getSettings());
+        toggleModalVisibility(elements.settingsModal, true);
+    }
     /**
      * Fills the settings modal fields with the current configuration values.
-     * @param {object} config - The configuration object to load into the fields.
+     * @param {object} settings - The configuration object to load into the fields.
      */
-    function syncSettingsToModal(config) {
+    function syncSettingsToModal(settings) {
         document
             .querySelectorAll("#settingsModal [data-config]")
             .forEach((input) => {
                 const path = input.dataset.config;
-
-                let value;
-                if (path.includes(".")) {
-                    const [parentKey, childKey] = path.split(".");
-                    value = config[parentKey]?.[childKey];
-                } else {
-                    value = config[path];
-                }
+                const value = getValueFromPath(settings, path);
 
                 if (input.type === "checkbox") {
                     input.checked = value;
@@ -102,9 +108,10 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
 
     /**
      * Gathers current values from the settings modal and passes them to the onSave callback.
+     * The settings are gathered as a flat object (using dot-notation keys).
      */
     function handleSettingsSave() {
-        const newSettings = getSettings();
+        const settingsToSave = {};
 
         document
             .querySelectorAll("#settingsModal [data-config]")
@@ -120,17 +127,11 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
                     value = input.value;
                 }
 
-                if (path.includes(".")) {
-                    const [parentKey, childKey] = path.split(".");
-                    if (!newSettings[parentKey]) newSettings[parentKey] = {};
-                    newSettings[parentKey][childKey] = value;
-                } else {
-                    newSettings[path] = value;
-                }
+                settingsToSave[path] = value;
             });
 
-        onSave(newSettings);
-        elements.settingsModal.style.display = "none";
+        onSave(settingsToSave);
+        toggleModalVisibility(elements.settingsModal, false);
     }
 
     /**
@@ -141,17 +142,12 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
             confirm("Are you sure you want to reset all settings to default?")
         ) {
             onReset();
-            elements.settingsModal.style.display = "none";
+            toggleModalVisibility(elements.settingsModal, false);
         }
     }
 
-    /**
-     * Shows the settings modal and initializes fields with current config.
-     */
-    function showSettingsModal() {
-        onOpen("settings");
-        syncSettingsToModal(getSettings());
-        elements.settingsModal.style.display = "flex";
+    function resetAll() {
+
     }
 
     function setScore(score) {
@@ -169,7 +165,10 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
         localStorage.setItem("username", username);
     }
 
-    function togglePause(pause) {}
+    function togglePause(isPaused) {
+        // Logika wyświetlania pauzy (teraz obsługiwana przez modalManager z zewnętrznego modułu)
+        // W tym module layoutManager może dodawać/usuwać klasę 'game-paused' z body/canvas.
+    }
 
     function gameOver(snapshot) {
         setLevel(snapshot.level);
@@ -200,6 +199,7 @@ export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
         setUsername,
         togglePause,
         gameOver,
+        resetAll,
         showUsernameModal,
         showSettingsModal,
     };

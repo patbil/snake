@@ -17,8 +17,9 @@ window.onload = function () {
             game.restart();
         },
         onReset: () => {
-            settingsManager.saveSettings(settingsManager.defaultConfig);
+            settingsManager.restoreSettings();
             game.restart();
+
         },
     });
 

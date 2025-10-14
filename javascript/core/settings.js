@@ -6,8 +6,8 @@ import { config } from "./config.js";
  * @returns {object} The public interface for managing settings.
  */
 export function createSettingsManager() {
-    const settingsKey = "snakeGameSettings";
     const settings = structuredClone(config);
+    const settingsKey = "snakeGameSettings";
     const configurableKeys = [
         "initialSegmentCount",
         "initialSpeed",
@@ -29,20 +29,26 @@ export function createSettingsManager() {
         return settings;
     }
 
+    function restoreSettings() {
+        configurableKeys.forEach((key) => {
+            const defaultValue = key.includes(".")
+                ? key.split(".").reduce((acc, k) => acc[k], config)
+                : config[key];
+            setNestedValue(settings, key, defaultValue);
+        });
+
+        localStorage.removeItem(settingsKey);
+    }
+
     function loadSettings() {
         const stored = localStorage.getItem(settingsKey);
         if (stored) {
             const loadedSettings = JSON.parse(stored);
             configurableKeys.forEach((key) => {
                 const value = loadedSettings[key];
-
-                if (value !== undefined) {
-                    setNestedValue(settings, key, value);
-                }
+                if (value !== undefined) setNestedValue(settings, key, value);
             });
         }
-
-        return settings;
     }
 
     /**
@@ -82,6 +88,7 @@ export function createSettingsManager() {
         getSettings,
         loadSettings,
         saveSettings,
+        restoreSettings,
         defaultConfig: structuredClone(config),
     };
 }

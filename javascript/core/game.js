@@ -67,12 +67,17 @@ export function createGame({ layoutManager, audioManager, settings, canvas }) {
         eventBus.on("score", handleScore);
         eventBus.on("level", handleLevel);
         eventBus.on("gameover", handleGameOver);
+        eventBus.on("reset", handleReset);
         eventBus.on("COMMAND_PAUSE", togglePause);
         eventBus.on("INPUT_MOVE", handleMove);
     }
 
     function handleMove(dir) {
         engine.setDirection(dir.x, dir.y);
+    }
+
+    function handleReset() {
+        layoutManager.resetAll();
     }
 
     function handlePause(isPaused) {
@@ -90,14 +95,17 @@ export function createGame({ layoutManager, audioManager, settings, canvas }) {
         audioManager.play("levelup");
 
         const { speed } = loop.snapshot();
-        const newSpeed = Math.max(settings.maxSpeed, speed - settings.speedStep);
+        const newSpeed = Math.max(
+            settings.maxSpeed,
+            speed - settings.speedStep
+        );
         loop.setSpeed(newSpeed);
     }
 
     function handleGameOver(snapshot) {
+        stop();
         layoutManager.gameOver(snapshot);
         audioManager.play("gameover");
-        loop.setSpeed(settings.initialSpeed);
     }
 
     return {
