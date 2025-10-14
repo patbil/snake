@@ -1,22 +1,15 @@
+import { EVENT_DOMAINS } from "../core/events-definition.js";
+
 /**
  * Creates the Layout Manager module.
- * This module is responsible for direct manipulation of the DOM.
+ * This module is responsible for direct manipulation of the DOM and managing UI state.
  *
- * @param {object} settingsCallbacks - An object containing callback functions for settings persistence and game control.
- * @param {function(): object} settingsCallbacks.getSettings - Function to get the current settings object.
- * @param {function(string): void} settingsCallbacks.onOpen - Function to call when a modal is opening (e.g., to pause the game).
- * @param {function(object): void} settingsCallbacks.onSave - Function to call when settings are saved.
- * @param {function(): object} settingsCallbacks.onReset - Function to call when settings are reset to default.
- * @param {function(): void} settingsCallbacks.onRestart - Function to call when the game needs to be restarted.
- * @returns {object} The public interface for interacting with the game layout.
+ * @param {object} dependencies - The dependencies required to initialize the layout manager.
+ * @param {object} dependencies.settings - The initial or current game settings object.
+ * @param {object} dependencies.eventBus - An event emitter/bus instance for communication between modules.
+ * @returns {object} The public interface for interacting with the game layout, including methods to show modals and update the UI.
  */
-export function createLayoutManager({
-    getSettings,
-    onOpen,
-    onSave,
-    onReset,
-    onRestart,
-}) {
+export function createLayoutManager({ settings, eventBus }) {
     const elements = getElements();
 
     function getElements() {
@@ -71,7 +64,7 @@ export function createLayoutManager({
                 settingsToSave[path] = value;
             });
 
-        onSave(settingsToSave);
+        eventBus.emit(EVENT_DOMAINS.UI.SETTINGS.SAVE, settingsToSave);
         toggleElementVisibility(elements.settingsModal, false);
     }
 
@@ -79,12 +72,12 @@ export function createLayoutManager({
         if (
             confirm("Are you sure you want to reset all settings to default?")
         ) {
-            onReset();
+            eventBus.emit(EVENT_DOMAINS.UI.SETTINGS.RESET);
         }
     }
 
     function handleRestartGame() {
-        onRestart();
+        eventBus.emit(EVENT_DOMAINS.UI.RESTART_REQUESTED);
     }
 
     function attachEventListeners() {
@@ -119,7 +112,7 @@ export function createLayoutManager({
      * @returns {Promise<string>} A Promise that resolves with the validated username string.
      */
     function showUsernameModal() {
-        onOpen("username");
+        eventBus.emit(EVENT_DOMAINS.UI.OPEN_MODAL, { type: "username" });
 
         return new Promise((resolve) => {
             const handleStart = () => {
@@ -161,8 +154,8 @@ export function createLayoutManager({
     }
 
     function showSettingsModal() {
-        onOpen("settings");
-        syncSettingsToModal(getSettings());
+        eventBus.emit(EVENT_DOMAINS.UI.OPEN_MODAL, { type: "settings" });
+        syncSettingsToModal(settings);
         toggleElementVisibility(elements.settingsModal, true);
     }
 
@@ -206,12 +199,12 @@ export function createLayoutManager({
         localStorage.setItem("username", username);
     }
 
-    function togglePause(isPaused) {
+    function togglePauseModal(isPaused) {
         toggleElementVisibility(elements.stateModal, isPaused);
         toggleElementVisibility(elements.pauseElements, isPaused, "block");
     }
 
-    function gameOver(snapshot) {
+    function showGameOverModal(snapshot) {
         toggleElementVisibility(elements.stateModal, true);
         toggleElementVisibility(elements.gameoverElements, true, "block");
         elements.finalLevel.textContent = snapshot.level;
@@ -224,9 +217,9 @@ export function createLayoutManager({
         setLevel,
         setScore,
         setUsername,
-        togglePause,
-        gameOver,
         resetAll,
+        togglePauseModal,
+        showGameOverModal,
         showUsernameModal,
         showSettingsModal,
     };

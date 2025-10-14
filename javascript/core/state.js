@@ -65,6 +65,8 @@ export function createStateManager(settings, eventBus) {
     }
 
     function setDirection(x, y) {
+        if (state.pause) return;
+
         const allowed = [-1, 0, 1];
         const ok = allowed.includes(x) && allowed.includes(y);
         if (!ok) return;
