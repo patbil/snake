@@ -2,11 +2,10 @@
  * State Manager Factory for the Snake game.
  * Encapsulates all game state, manages mutations, and utilizes the Event Emitter pattern.
  *
- * @param {object} config - Game configuration object (e.g., gridSize, initialSegmentCount).
+ * @param {object} settings - Game settingsuration object (e.g., gridSize, initialSegmentCount).
  * @returns {object} The public State Manager interface.
  */
-export function createStateManager(config) {
-    const listeners = new Map();
+export function createStateManager(settings, eventBus) {
     const state = {
         pause: false,
         score: 0,
@@ -16,23 +15,6 @@ export function createStateManager(config) {
         prevDirection: { x: 0, y: 0 },
         apple: { x: null, y: null },
     };
-
-    function on(name, handler) {
-        if (!listeners.has(name)) listeners.set(name, new Set());
-        listeners.get(name).add(handler);
-    }
-
-    function off(name, handler) {
-        const set = listeners.get(name);
-        set?.delete(handler);
-        if (set && set.size === 0) listeners.delete(name);
-    }
-
-    function emit(name, payload) {
-        const listener = listeners.get(name);
-        if (!listener) return;
-        for (const handler of Array.from(listener)) handler(payload);
-    }
 
     /**
      * Returns a safe, shallow copy of the current game state .
@@ -54,9 +36,9 @@ export function createStateManager(config) {
         state.score = 0;
         state.pause = false;
 
-        const startPos = Math.floor(config.gridSize / 2);
+        const startPos = Math.floor(settings.gridSize / 2);
         state.segments = Array.from(
-            { length: config.initialSegmentCount },
+            { length: settings.initialSegmentCount },
             (_, i) => ({
                 x: startPos - i,
                 y: startPos,
@@ -67,17 +49,17 @@ export function createStateManager(config) {
         state.prevDirection = { x: 0, y: 0 };
         state.apple = { x: startPos + 5, y: startPos + 5 };
 
-        emit("reset", snapshot());
+        eventBus.emit("reset", snapshot());
     }
 
     function addHead(x, y) {
         state.segments.unshift({ x, y });
-        emit("state", snapshot());
+        eventBus.emit("state", snapshot());
     }
 
     function removeTail() {
         state.segments.pop();
-        emit("state", snapshot());
+        eventBus.emit("state", snapshot());
     }
 
     function setDirection(x, y) {
@@ -93,10 +75,10 @@ export function createStateManager(config) {
         }
 
         state.direction = { x, y };
-        emit("direction", { x, y });
+        eventBus.emit("direction", { x, y });
     }
 
-    function togglePause(emitEvent) {
+    function togglePause({ emitEvent }) {
         state.pause = !state.pause;
 
         if (state.pause) {
@@ -107,34 +89,31 @@ export function createStateManager(config) {
         }
 
         if (emitEvent) {
-            emit("pause", state.pause);
+            eventBus.emit("pause", state.pause);
         }
     }
 
     function setApple(x, y) {
         state.apple = { x, y };
-        emit("apple", { x, y });
+        eventBus.emit("apple", { x, y });
     }
 
     function increaseScore() {
         state.score += 1;
-        emit("score", state.score);
+        eventBus.emit("score", state.score);
     }
 
     function increaseLevel() {
         state.level += 1;
-        emit("level", state.level);
+        eventBus.emit("level", state.level);
     }
 
     function gameOver() {
         setDefault();
-        emit("gameover", snapshot());
+        eventBus.emit("gameover", snapshot());
     }
 
     return {
-        on,
-        off,
-        emit,
         snapshot,
         setDefault,
         setDirection,

@@ -1,35 +1,31 @@
-import { config as defaultConfig } from "./core/config.js";
-import { createGame } from "./core/game.js"; // Załóżmy, że ten moduł jest Twoim 'startGame'
+import { createGame } from "./core/game.js";
 import { createAudioManager } from "./core/audio.js";
 import { createLayoutManager } from "./layout/layout.js";
 import { createSettingsManager } from "./core/settings.js";
 
 window.onload = function () {
-    const settingsManager = createSettingsManager(defaultConfig);
-    const config = settingsManager.loadSettings();
-
-    const audioManager = createAudioManager(config);
+    const settingsManager = createSettingsManager();
+    const settings = settingsManager.getSettings();
+    const audioManager = createAudioManager(settings);
     const layoutManager = createLayoutManager({
-        getConfig: settingsManager.getSettings,
-        onOpen: () => {
-            game.togglePause(false);
+        getSettings: settingsManager.getSettings,
+        onOpen: (type) => {
+            if (type === 'settings') game.togglePause({ emitEvent: true })
         },
-        onSave: (newSettings) => {
-            settingsManager.saveSettings(newSettings);
+        onSave: (settings) => {
+            settingsManager.saveSettings(settings);
+            game.restart();
         },
         onReset: () => {
-            const resetConfig = settingsManager.defaultConfig;
-            settingsManager.saveSettings(resetConfig);
-            return resetConfig;
+            settingsManager.saveSettings(settingsManager.defaultConfig);
+            game.restart();
         },
     });
-
-    console.log(config)
 
     const game = createGame({
         layoutManager,
         audioManager,
-        config,
+        settings,
         canvas: document.getElementById("canvas"),
     });
 

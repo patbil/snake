@@ -1,14 +1,14 @@
 /**
  * Creates the Layout Manager module.
  * @param {object} settingsCallbacks - An object containing callback functions for settings persistence.
- * @param {function(): object} settingsCallbacks.getConfig - Function to get the current config object.
+ * @param {function(): object} settingsCallbacks.getSettings - Function to get the current settings object.
+ * @param {function(string): void} settingsCallbacks.onOpen - Function to call when modal is opening.
  * @param {function(object): void} settingsCallbacks.onSave - Function to call when settings are saved.
  * @param {function(): object} settingsCallbacks.onReset - Function to call when settings are reset to default.
  * @returns {object} The public interface for interacting with the game layout.
  */
-export function createLayoutManager({ getConfig, onOpen, onSave, onReset }) {
+export function createLayoutManager({ getSettings, onOpen, onSave, onReset }) {
     const elements = getElements();
-    const initialConfig = getConfig();
 
     /**
      * Gathers and caches references to all necessary DOM elements.
@@ -19,6 +19,7 @@ export function createLayoutManager({ getConfig, onOpen, onSave, onReset }) {
             usernameDisplay: document.getElementById("username"),
             scoreDisplay: document.getElementById("score"),
             levelDisplay: document.getElementById("level"),
+            stateModal: document.getElementById("stateModal"),
             usernameModal: document.getElementById("usernameModal"),
             settingsModal: document.getElementById("settingsModal"),
             settingsButton: document.getElementById("settings"),
@@ -35,7 +36,7 @@ export function createLayoutManager({ getConfig, onOpen, onSave, onReset }) {
      * @returns {Promise<string>} A Promise that resolves with the validated username string.
      */
     function showUsernameModal() {
-        elements.usernameError.style.color = initialConfig.colors.error;
+        onOpen("username");
 
         return new Promise((resolve) => {
             const handleStart = () => {
@@ -103,7 +104,7 @@ export function createLayoutManager({ getConfig, onOpen, onSave, onReset }) {
      * Gathers current values from the settings modal and passes them to the onSave callback.
      */
     function handleSettingsSave() {
-        const newSettings = getConfig();
+        const newSettings = getSettings();
 
         document
             .querySelectorAll("#settingsModal [data-config]")
@@ -137,21 +138,19 @@ export function createLayoutManager({ getConfig, onOpen, onSave, onReset }) {
      */
     function handleSettingsReset() {
         if (
-            !confirm("Are you sure you want to reset all settings to default?")
+            confirm("Are you sure you want to reset all settings to default?")
         ) {
-            return;
+            onReset();
+            elements.settingsModal.style.display = "none";
         }
-
-        const resetConfig = onReset();
-        syncSettingsToModal(resetConfig);
     }
 
     /**
      * Shows the settings modal and initializes fields with current config.
      */
     function showSettingsModal() {
-        onOpen();
-        syncSettingsToModal(getConfig());
+        onOpen("settings");
+        syncSettingsToModal(getSettings());
         elements.settingsModal.style.display = "flex";
     }
 

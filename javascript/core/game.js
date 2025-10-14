@@ -2,22 +2,24 @@ import { createLoop } from "./loop.js";
 import { createEngine } from "./engine.js";
 import { createRenderer } from "./renderer.js";
 import { createKeydownHandler } from "./handler.js";
+import { createEventBus } from "./event.js";
 
 /**
  * Creates and manages the full lifecycle of the Snake game (start, stop, pause, restart).
  * Maintains encapsulation of the core game state.
- * * @param {object} dependencies - Dependencies: layoutManager, audioManager, config, canvas.
+ * @param {object} dependencies - Dependencies: layoutManager, audioManager, settings, canvas.
  * @returns {object} The public control interface.
  */
-export function createGame({ layoutManager, audioManager, config, canvas }) {
-    const engine = createEngine(config);
-    const renderer = createRenderer(canvas, config);
-    const keydownHandler = createKeydownHandler(engine);
+export function createGame({ layoutManager, audioManager, settings, canvas }) {
+    const eventBus = createEventBus();
+    const engine = createEngine(settings, eventBus);
+    const renderer = createRenderer(canvas, settings);
+    const keydownHandler = createKeydownHandler(eventBus);
 
     const loop = createLoop(() => {
         const snapshot = engine.tick();
-        renderer.render(snapshot, config.gridSize);
-    }, config.initialSpeed);
+        renderer.render(snapshot, settings.gridSize);
+    }, settings.initialSpeed);
 
     registerEvents();
 
@@ -39,9 +41,13 @@ export function createGame({ layoutManager, audioManager, config, canvas }) {
         keydownHandler.stop();
     }
 
+    /**
+     * Stops the game loop, resets the engine state, and restarts the game.
+     * Used for starting a new game after a Game Over or a user-initiated restart.
+     */
     function restart() {
         stop();
-        engine.reinitialize();
+        engine.setDefault();
         start();
     }
 
@@ -49,22 +55,29 @@ export function createGame({ layoutManager, audioManager, config, canvas }) {
      * Toggles the pause state in the engine.
      * The engine will emit the 'pause' event, which is handled below.
      */
-    function togglePause(emitEvent) {
-        engine.togglePause(emitEvent);
+    function togglePause({ emitEvent }) {
+        engine.togglePause({ emitEvent });
     }
+
     /**
      * Registers all event subscriptions from the core engine to external managers.
      */
     function registerEvents() {
-        engine.on("pause", handlePause);
-        engine.on("score", handleScore);
-        engine.on("level", handleLevel);
-        engine.on("gameover", handleGameOver);
+        eventBus.on("pause", handlePause);
+        eventBus.on("score", handleScore);
+        eventBus.on("level", handleLevel);
+        eventBus.on("gameover", handleGameOver);
+        eventBus.on("COMMAND_PAUSE", togglePause);
+        eventBus.on("INPUT_MOVE", handleMove);
+    }
+
+    function handleMove(dir) {
+        engine.setDirection(dir.x, dir.y);
     }
 
     function handlePause(isPaused) {
         layoutManager.togglePause(isPaused);
-        isPaused ? loop.pause() : loop.start();
+        isPaused ? loop.stop() : loop.start();
     }
 
     function handleScore(score) {
@@ -77,19 +90,20 @@ export function createGame({ layoutManager, audioManager, config, canvas }) {
         audioManager.play("levelup");
 
         const { speed } = loop.snapshot();
-        const newSpeed = Math.max(config.maxSpeed, speed - config.speedStep);
+        const newSpeed = Math.max(settings.maxSpeed, speed - settings.speedStep);
         loop.setSpeed(newSpeed);
     }
 
     function handleGameOver(snapshot) {
         layoutManager.gameOver(snapshot);
         audioManager.play("gameover");
-        loop.setSpeed(config.initialSpeed);
+        loop.setSpeed(settings.initialSpeed);
     }
 
     return {
         start,
         stop,
+        restart,
         togglePause,
     };
 }

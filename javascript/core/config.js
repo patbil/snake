@@ -12,9 +12,9 @@ export const config = Object.freeze({
     /** The minimum possible interval (maximum speed) in milliseconds. */
     maxSpeed: 30,
     /** The score required to advance one level. */
-    levelStep: 2,
+    levelStep: 5,
     /** The amount by which speed decreases (interval decreases) per level step in milliseconds. */
-    speedStep: 10,
+    speedStep: 5,
     /** Configuration settings for the audio manager */
     sound: {
         enabled: true,
@@ -25,9 +25,9 @@ export const config = Object.freeze({
     },
     /** Defines the colors used for rendering the game elements. */
     colors: {
-        snake: "red",
-        apple: "green",
-        background: "black",
+        snake: "#FF0000",
+        apple: "#008000",
+        background: "#000000",
         gridLine: "#333333",
     },
 });

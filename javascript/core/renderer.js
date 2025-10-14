@@ -2,14 +2,14 @@
  * Creates the Renderer module, responsible for drawing the game state onto a Canvas element.
  *
  * @param {HTMLCanvasElement} canvas - The Canvas element where the game will be drawn.
- * @param {object} config - The configuration object (contains colors).
+ * @param {object} settings - The settingsuration object (contains colors).
  * @returns {object} The public renderer interface with the 'render' function.
  */
-export function createRenderer(canvas, config) {
+export function createRenderer(canvas, settings) {
     const ctx = canvas.getContext("2d");
 
     const GRID_GAP = 4;
-    const { colors } = config;
+    const { colors } = settings;
 
     function clear() {
         ctx.fillStyle = colors.background;

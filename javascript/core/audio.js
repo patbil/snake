@@ -2,14 +2,14 @@
  * Creates the Audio Controller module.
  * This controller manages sound effects based on events emitted by the State Manager.
  *
- * @param {object} config - Configuration object containing sound settings and paths.
+ * @param {object} settings - settingsuration object containing sound settings and paths.
  * @returns {object} The public interface for initializing and playing sounds.
  */
-export function createAudioManager(config) {
-    if (!config.sound.enabled) return { init: () => {}, play: () => {} };
+export function createAudioManager(settings) {
+    if (!settings.sound.enabled) return { init: () => {}, play: () => {} };
 
     const audioCache = {};
-    const volume = config.sound.volume;
+    const volume = settings.sound.volume;
 
     function loadAudio(path) {
         if (audioCache[path]) return audioCache[path];
@@ -25,7 +25,7 @@ export function createAudioManager(config) {
      * @param {string} soundName - The name of the sound.
      */
     function play(soundName) {
-        const path = config.sound[soundName];
+        const path = settings.sound[soundName];
         if (!path) return;
 
         const audio = loadAudio(path);

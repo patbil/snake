@@ -15,7 +15,7 @@ body {
     color: var(--text-color);
     display: flex;
     justify-content: center;
-    padding: 32px 20px;
+    padding: 32px 20px; 
 }
 
 .hidden {
@@ -45,7 +45,7 @@ h1 {
     margin: 0 0 var(--ui-gap-md) 0;
     font-family: var(--secondary-font);
     font-size: 18px;
-    color: var(--title-color);
+    color: var(--accent);
     letter-spacing: 1px;
     text-align: center;
 }

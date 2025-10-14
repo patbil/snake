@@ -5,37 +5,34 @@ import { createStateManager } from "./state.js";
  * This function acts as a controller, orchestrating the game loop ('tick')
  * and managing interactions between the game state and logic.
  *
- * @param {object} config - The global game configuration object.
+ * @param {object} settings - The global game settingsuration object.
+ * @param {object} eventBus - The central Event Bus used by the engine to emit state change notifications.
  * @returns {object} The public engine interface.
  */
-export function createEngine(config) {
-    const stateManager = createStateManager(config);
-    const gridSize = config.gridSize;
+export function createEngine(settings, eventBus) {
+    const stateManager = createStateManager(settings, eventBus);
+    const gridSize = settings.gridSize;
     let initialized = false;
 
     function initialize() {
-        stateManager.setDefault();
+        setDefault();
         initialized = true;
     }
 
-    function on(name, handler) {
-        stateManager.on(name, handler);
+    function togglePause({ emitEvent }) {
+        stateManager.togglePause({ emitEvent });
     }
 
-    function setDirection(x, y) {
-        stateManager.setDirection(x, y);
+    function setDefault() {
+        stateManager.setDefault();
     }
 
-    function getDirection() {
-        return stateManager.snapshot().direction;
-    }
-
-    function togglePause(emitEvent) {
-        stateManager.togglePause(emitEvent);
-    }
-
-    function reinitialize() {
-        initialize();
+    function setDirection(dx, dy) {
+        const currentDir = stateManager.snapshot().direction;
+        if (dx + currentDir.x === 0 && dy + currentDir.y === 0) {
+            return;
+        }
+        stateManager.setDirection(dx, dy);
     }
 
     /**
@@ -62,7 +59,7 @@ export function createEngine(config) {
 
         while (
             newState.segments.length >
-            config.initialSegmentCount + newState.score
+            settings.initialSegmentCount + newState.score
         ) {
             stateManager.removeTail();
             newState = stateManager.snapshot();
@@ -84,7 +81,7 @@ export function createEngine(config) {
         stateManager.increaseScore();
         let newState = stateManager.snapshot();
 
-        if (newState.score % config.levelStep === 0) {
+        if (newState.score % settings.levelStep === 0) {
             stateManager.increaseLevel();
             newState = stateManager.snapshot();
         }
@@ -123,5 +120,5 @@ export function createEngine(config) {
         };
     }
 
-    return { on, tick, setDirection, getDirection, togglePause, reinitialize };
+    return { tick, setDirection, togglePause, setDefault };
 }

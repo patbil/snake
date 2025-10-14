@@ -10,7 +10,6 @@
         <link rel="stylesheet" href="/css/modal.css" />
         <link rel="stylesheet" href="/css/username-modal.css" />
         <link rel="stylesheet" href="/css/settings-modal.css" />
-
     </head>
     <body>
         <div id="settingsModal" class="modal">
@@ -18,67 +17,84 @@
                 <h2>Game Settings ⚙️</h2>
                 <div class="setting-group">
                     <h3>Game Rules</h3>
-                    <label for="setting-segments">Start Segments:</label>
-                    <input
-                        type="number"
-                        id="setting-segments"
-                        data-config="initialSegmentCount"
-                        min="2"
-                        max="10"
-                    />
-                    <label for="setting-levelstep">Level Step (Score):</label>
-                    <input
-                        type="number"
-                        id="setting-levelstep"
-                        data-config="levelStep"
-                        min="1"
-                        max="10"
-                    />
+                    <div class="setting-control">
+                        <label for="setting-segments">Start Segments:</label>
+                        <input
+                            type="number"
+                            id="setting-segments"
+                            data-config="initialSegmentCount"
+                            min="2"
+                            max="10"
+                        />
+                    </div>
+
+                    <div class="setting-control">
+                        <label for="setting-levelstep"
+                            >Level Step (Score):</label
+                        >
+                        <input
+                            type="number"
+                            id="setting-levelstep"
+                            data-config="levelStep"
+                            min="1"
+                            max="10"
+                        />
+                    </div>
                 </div>
 
                 <div class="setting-group">
                     <h3>Speed Control (ms)</h3>
-                    <label for="setting-startspeed">Start Speed:</label>
-                    <input
-                        type="number"
-                        id="setting-startspeed"
-                        data-config="initialSpeed"
-                        min="50"
-                        max="300"
-                    />
-                    <label for="setting-maxspeed"
-                        >Max Speed (min interval):</label
-                    >
-                    <input
-                        type="number"
-                        id="setting-maxspeed"
-                        data-config="maxSpeed"
-                        min="10"
-                        max="100"
-                    />
+                    <div class="setting-control">
+                        <label for="setting-startspeed">Start Speed:</label>
+                        <input
+                            type="number"
+                            id="setting-startspeed"
+                            data-config="initialSpeed"
+                            min="50"
+                            max="300"
+                        />
+                    </div>
+                    <div class="setting-control">
+                        <label for="setting-maxspeed"
+                            >Max Speed (min interval):</label
+                        >
+                        <input
+                            type="number"
+                            id="setting-maxspeed"
+                            data-config="maxSpeed"
+                            min="10"
+                            max="100"
+                        />
+                    </div>
                     <span class="setting-info">Lower ms = Faster Speed</span>
                 </div>
 
                 <div class="setting-group">
                     <h3>Audio & Visuals</h3>
-                    <label for="setting-sound">Sound Enabled:</label>
-                    <input
-                        type="checkbox"
-                        id="setting-sound"
-                        data-config="sound.enabled"
-                    />
-                    <label for="setting-snakecolor">Snake Color:</label>
-                    <input
-                        type="color"
-                        id="setting-snakecolor"
-                        data-config="colors.snake"
-                    />
-                    <label for="setting-applecolor">Apple Color:</label>
-                    <input
-                        type="color"
-                        id="setting-applecolor"
-                        data-config="colors.apple"
-                    />
+                    <div class="setting-control control-row">
+                        <label for="setting-sound">Sound Enabled:</label>
+                        <input
+                            type="checkbox"
+                            id="setting-sound"
+                            data-config="sound.enabled"
+                        />
+                    </div>
+                    <div class="setting-control control-row">
+                        <label for="setting-snakecolor ">Snake Color:</label>
+                        <input
+                            type="color"
+                            id="setting-snakecolor"
+                            data-config="colors.snake"
+                        />
+                    </div>
+                    <div class="setting-control control-row">
+                        <label for="setting-applecolor ">Apple Color:</label>
+                        <input
+                            type="color"
+                            id="setting-applecolor"
+                            data-config="colors.apple"
+                        />
+                    </div>
                 </div>
 
                 <button id="saveSettingsButton">Save & Close</button>
@@ -90,19 +106,53 @@
                 <h2>Welcome, Snake Player! 🐍</h2>
                 <p>Please enter your name so we can save your high score.</p>
 
-                <span id="usernameError" class="error-message hidden">
-                    Name must be at least 2 characters long!
-                </span>
+                <div class="name-form">
+                    <span id="usernameError" class="error-message hidden">
+                        Name must be at least 2 characters long!
+                    </span>
 
-                <input
-                    type="text"
-                    id="userNameInput"
-                    placeholder="Enter your name..."
-                    maxlength="20"
-                    required
-                />
+                    <input
+                        type="text"
+                        id="userNameInput"
+                        placeholder="Enter your name..."
+                        maxlength="20"
+                        required
+                    />
 
-                <button id="startGameButton">Start Game!</button>
+                    <button id="startGameButton">Start Game!</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="state-modal" class="modal">
+            <div class="modal-content">
+                <h2 id="modal-title"></h2>
+
+                <div
+                    id="pause-elements"
+                    class="modal-state-group"
+                    style="display: none"
+                >
+                    <p>Game paused.</p>
+                    <p>Press **SPACE** or click to resume.</p>
+                </div>
+
+                <div
+                    id="gameover-elements"
+                    class="modal-state-group"
+                    style="display: none"
+                >
+                    <p>The rules defeated you!</p>
+
+                    <div class="score-summary">
+                        <p>Your Score: <strong id="final-score">0</strong></p>
+                        <p>Level: <strong id="final-level">1</strong></p>
+                    </div>
+
+                    <button id="restart-button" class="btn btn-primary">
+                        PLAY AGAIN
+                    </button>
+                </div>
             </div>
         </div>
 
