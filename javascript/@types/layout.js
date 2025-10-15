@@ -1,12 +1,12 @@
 /** @typedef {import('./engine').TickSnapshot} TickSnapshot */
 /** @typedef {import('./config').GameConfig} GameConfig */
-/** @typedef {import('./event').EventBusPublicAPI} EventBusPublicAPI */
+/** @typedef {import('./event').EventBus} EventBus */
 
 /**
  * Public API of the Layout Manager.
  * The Layout Manager is responsible for all DOM manipulations and UI updates.
  * 
- * @typedef {Object} LayoutManagerPublicAPI
+ * @typedef {Object} LayoutManager
  * @property {(score: number) => void} setScore - Updates the score display in the UI.
  * @property {(level: number) => void} setLevel - Updates the level display in the UI.
  * @property {(username: string) => void} setUsername - Sets and displays the username in the UI.

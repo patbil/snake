@@ -1,7 +1,7 @@
 function initApp() {
-    import("./core/game.js").then(({ createGame }) => {
+    import("./core/game.js").then(async ({ createGame }) => {
         const canvas = document.getElementById("canvas");
-        createGame(canvas).initialize();
+        (await createGame(canvas)).initialize();
     });
 }
 

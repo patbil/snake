@@ -1,4 +1,4 @@
-/** @typedef {import('../@types/loop').LoopPublicAPI} LoopPublicAPI */
+/** @typedef {import('../@types/loop').Loop} Loop */
 
 /**
  * Creates the Game Loop module, wrapping setInterval functionality.
@@ -6,7 +6,7 @@
  *
  * @param {() => void} callback - The function to execute cyclically.
  * @param {number} speed - The initial interval (ms) between 'callback' executions.
- * @returns {LoopPublicAPI}
+ * @returns {Loop}
  */
 export function createLoop(callback, speed) {
     let intervalId = undefined;

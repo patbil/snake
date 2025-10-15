@@ -4,7 +4,7 @@
  * Public API of the Event Bus.
  * The Event Bus implements the publish-subscribe pattern, allowing modules to communicate without direct dependencies. 
  * 
- * @typedef {Object} EventBusPublicAPI
+ * @typedef {Object} EventBus
  * @property {<K extends keyof GameEvents>(type: K, listener: (payload: GameEvents[K]) => void) => void} on
  *           Subscribes a listener to a specific event type.
  *           The listener will be called whenever the event is emitted.

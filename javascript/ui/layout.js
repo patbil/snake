@@ -1,16 +1,16 @@
 import { EVENTS } from "../events/events.js";
 
 /** @typedef {import('../@types/config.js').GameConfig} GameConfig */
-/** @typedef {import('../@types/event.js').EventBusPublicAPI} EventBusPublicAPI */
-/** @typedef {import('../@types/layout.js').LayoutManagerPublicAPI} LayoutManagerPublicAPI */
+/** @typedef {import('../@types/event.js').EventBus} EventBus */
+/** @typedef {import('../@types/layout.js').LayoutManager} LayoutManageLayoutManagerrPublicAPI */
 
 /**
  * Creates the Layout Manager module.
  * Responsible for direct DOM manipulation and managing UI state.
  *
  * @param {GameConfig} settings - The initial or current game settings object.
- * @param {EventBusPublicAPI} eventBus - Event Bus instance for module communication.
- * @returns {LayoutManagerPublicAPI} The public interface for interacting with the game layout.
+ * @param {EventBus} eventBus - Event Bus instance for module communication.
+ * @returns {LayoutManager} The public interface for interacting with the game layout.
  */
 export function createLayoutManager(eventBus, settings) {
     const elements = getElements();
@@ -34,6 +34,7 @@ export function createLayoutManager(eventBus, settings) {
             restartButton: document.getElementById("restartButton"),
             finalLevel: document.getElementById("finalLevel"),
             finalScore: document.getElementById("finalScore"),
+            leaderboardElement: document.querySelector('.leaderboard ul'),
         };
     }
 
@@ -43,6 +44,19 @@ export function createLayoutManager(eventBus, settings) {
 
     function getValueFromPath(obj, path) {
         return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+    }
+
+    function renderLeaderboard(scores) {
+        console.log({scores});
+
+        if (!scores || scores.length === 0) {
+            leaderboardElement.innerHTML = '<li class="empty">No scores yet. Be the first!</li>';
+            return;
+        }
+
+
+        // Clear existing entries
+        // elements.leaderboardElement.innerHTML = "";
     }
 
     function handleSettingsSave() {
@@ -204,5 +218,6 @@ export function createLayoutManager(eventBus, settings) {
         showGameOverModal,
         showUsernameModal,
         showSettingsModal,
+        renderLeaderboard
     };
 }

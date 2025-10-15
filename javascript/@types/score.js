@@ -23,7 +23,7 @@
  * The Score Manager handles leaderboard functionality including saving scores,
  * retrieving rankings, and managing persistent storage of high scores.
  * 
- * @typedef {Object} ScoreManagerPublicAPI
+ * @typedef {Object} ScoreManager
  * @property {(username: string, score: number, level: number) => Promise<ScoreResult>} addScore
  *           Adds a new score to the leaderboard.
  *           @param {string} username - Player's username

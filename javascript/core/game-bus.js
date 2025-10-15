@@ -1,13 +1,13 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import("../@types/game-bus.js").GameBusPublicAPI} GameBusPublicAPI */
+/** @typedef {import("../@types/game-bus.js").GameBus} GameBus */
 /** @typedef {import("../@types/game-bus.js").GameBusDependencies} GameBusDependencies */
 
 /**
  * Module that binds events emitted by the Engine and UI
  * to the corresponding actions executed by the Renderer, AudioManager, and Loop.
  * @param {GameBusDependencies} dependencies
- * @returns {GameBusPublicAPI}
+ * @returns {GameBus}
  */
 export function createGameBus({
     eventBus,
@@ -93,6 +93,10 @@ export function createGameBus({
         engine.togglePause({ emitEvent: false });
     }
 
+    function handleLeaderboardUpdate(scores) {
+        layoutManager.renderLeaderboard(scores);
+    }
+
     function registerEvents() {
         eventBus.on(EVENTS.MOVE.TOGGLE_PAUSE, handleMovePause);
         eventBus.on(EVENTS.MOVE.CHANGE_DIRECTION, handleMove);
@@ -107,6 +111,9 @@ export function createGameBus({
         eventBus.on(EVENTS.UI.SETTINGS.RESET, handleSettingsReset);
         eventBus.on(EVENTS.UI.OPEN_MODAL, handleModalOpen);
         eventBus.on(EVENTS.UI.RESTART_REQUESTED, restart);
+
+        eventBus.on(EVENTS.LEADERBOARD.UPDATE, handleLeaderboardUpdate);
+
     }
 
     return { registerEvents, start };

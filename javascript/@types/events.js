@@ -1,14 +1,23 @@
 /**
  * Player movement and control events.
- * 
+ *
  * @typedef {Object} MoveEvents
  * @property {string} TOGGLE_PAUSE - Event to toggle pause state.
  * @property {string} CHANGE_DIRECTION - Event to change snake's movement direction.
  */
 
 /**
+ * Leaderboard-related events
+ *
+ * @typedef {Object} LeaderboardEvents
+ * @property {string} UPDATE - Triggered when leaderboard scores are updated.
+ * @property {string} FETCH - Triggered when leaderboard data is requested.
+ * @property {string} ERROR - Triggered when an error occurs while fetching or updating leaderboard.
+ */
+
+/**
  * Settings-related UI events.
- * 
+ *
  * @typedef {Object} UISettingsEvents
  * @property {string} SAVE - Event to save current settings to localStorage.
  * @property {string} RESET - Event to reset all settings to default values.
@@ -16,7 +25,7 @@
 
 /**
  * User interface events.
- * 
+ *
  * @typedef {Object} UIEvents
  * @property {string} RESTART_REQUESTED - Event triggered when player requests a game restart.
  * @property {string} OPEN_MODAL - Event to open a specific modal window.
@@ -25,7 +34,7 @@
 
 /**
  * Game state change events.
- * 
+ *
  * @typedef {Object} StateEvents
  * @property {string} DIRECTION - Event emitted when snake's direction changes.
  * @property {string} PAUSE - Event emitted when pause state toggles.
@@ -45,6 +54,7 @@
  * @property {StateEvents} STATE
  * @property {UIEvents} UI
  * @property {MoveEvents} MOVE
+ * @property {LeaderboardEvents} LEADERBOARD
  */
 
 export {};

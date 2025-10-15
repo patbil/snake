@@ -18,11 +18,7 @@
 //     function render(scores) {
 //         if (!leaderboardElement) return;
 
-//         if (!scores || scores.length === 0) {
-//             leaderboardElement.innerHTML = '<li class="empty">No scores yet. Be the first!</li>';
-//             return;
-//         }
-
+        
 //         leaderboardElement.innerHTML = scores
 //             .map((entry, index) => {
 //                 const medal = getMedal(index);

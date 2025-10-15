@@ -90,10 +90,10 @@ snake/
 This project uses JSDoc for type checking without TypeScript:
 
 ```javascript
-/** @typedef {import("../@types/engine.js").EnginePublicAPI} EnginePublicAPI */
+/** @typedef {import("../@types/engine.js").GameEngine} GameEngine */
 
 /**
- * @param {EnginePublicAPI} engine
+ * @param {GameEngine} engine
  * @returns {void}
  */
 function doSomething(engine) {

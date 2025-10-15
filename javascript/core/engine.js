@@ -1,8 +1,8 @@
 import { createStateManager } from "./state.js";
 
 /** @typedef {import('../@types/config.js').GameConfig} GameConfig */
-/** @typedef {import('../@types/events.js').EventBusPublicAPI} EventBus */
-/** @typedef {import('../@types/engine.js').EnginePublicAPI} EnginePublicAPI */
+/** @typedef {import('../@types/events.js').EventBus} EventBus */
+/** @typedef {import('../@types/engine.js').GameEngine} GameEngine */
 
 /**
  * Creates the Game Engine module.
@@ -10,7 +10,7 @@ import { createStateManager } from "./state.js";
  *
  * @param {GameConfig} settings - Game configuration object.
  * @param {EventBus} eventBus - Central Event Bus for emitting state change events.
- * @returns {EnginePublicAPI}
+ * @returns {GameEngine}
  */
 export function createEngine(eventBus, settings) {
     const stateManager = createStateManager(eventBus, settings);
