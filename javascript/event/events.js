@@ -1,4 +1,9 @@
-export const EVENTS= {
+/**
+ * Centralized event constants for the Snake Game.
+ * Using this ensures consistent event names across the application.
+ * @type {import('../types/events').GameEvents}
+ */
+export const EVENTS = {
     MOVE: {
         TOGGLE_PAUSE: "MOVE:TOGGLE_PAUSE",
         CHANGE_DIRECTION: "MOVE:CHANGE_DIRECTION",

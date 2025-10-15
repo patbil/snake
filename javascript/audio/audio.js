@@ -24,7 +24,7 @@ export function createAudioManager(audioSettings) {
 
     /**
      * Plays a specific sound effect by key.
-     * @param {keyof Omit<import('../types/config').AudioConfig, 'enabled' | 'volume'>} soundName - The sound key (e.g., "eat", "gameover", "levelup").
+     * @param {keyof Omit<import('../types/config').AudioConfig, 'enabled' | 'volume'>} soundName - The sound key.
      */
     function play(soundName) {
         if (!audioSettings.enabled) return;
