@@ -4,6 +4,8 @@
 /** @typedef {import('./audio').AudioManagerPublicAPI} AudioManagerPublicAPI */
 /** @typedef {import('./layout').LayoutManagerPublicAPI} LayoutManagerPublicAPI */
 /** @typedef {import('./settings').SettingsManagerPublicAPI} SettingsManagerPublicAPI */
+/** @typedef {import('./handler').HandlerPublicAPI} HandlerPublicAPI */
+
 
 /**
  * Dependencies required by the Game Bus to coordinate game events.
@@ -17,6 +19,7 @@
  * @property {AudioManagerPublicAPI} audioManager - Audio manager for playing sound effects
  * @property {LayoutManagerPublicAPI} layoutManager - Layout manager for updating DOM elements and modals
  * @property {SettingsManagerPublicAPI} settingsManager - Settings manager for persisting and retrieving user preferences
+ * @property {HandlerPublicAPI} keydownHandler - Keydown handler for capturing keyboard input
  */
 
 /**

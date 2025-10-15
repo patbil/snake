@@ -25,6 +25,8 @@ export function createLoop(callback, speed) {
 
     function setSpeed(newSpeed) {
         currentSpeed = newSpeed;
+        stop();
+        start();
     }
 
     function snapshot() {

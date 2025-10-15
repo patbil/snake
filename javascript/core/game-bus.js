@@ -16,7 +16,28 @@ export function createGameBus({
     audioManager,
     layoutManager,
     settingsManager,
+    keydownHandler,
 }) {
+    const settings = settingsManager.getSettings();
+
+    function start(username) {
+        loop.start();
+        keydownHandler.start();
+        if (username) layoutManager.setUsername(username);
+    }
+
+    function stop() {
+        loop.stop();
+        keydownHandler.stop();
+    }
+
+    function restart() {
+        stop();
+        engine.setDefault();
+        loop.setSpeed(settings.speed);
+        start();
+    }
+
     function handleMove(dir) {
         engine.setDirection(dir.x, dir.y);
     }
@@ -39,7 +60,6 @@ export function createGameBus({
         layoutManager.setLevel(level);
         audioManager.play("levelup");
 
-        const settings = settingsManager.getSettings();
         const { speed } = loop.snapshot();
         const newSpeed = Math.max(
             settings.maxSpeed,
@@ -51,6 +71,7 @@ export function createGameBus({
     function handleGameOver(snapshot) {
         layoutManager.showGameOverModal(snapshot);
         audioManager.play("gameover");
+        stop();
     }
 
     function handleReset() {
@@ -85,7 +106,8 @@ export function createGameBus({
         eventBus.on(EVENTS.UI.SETTINGS.SAVE, handleSettingsSave);
         eventBus.on(EVENTS.UI.SETTINGS.RESET, handleSettingsReset);
         eventBus.on(EVENTS.UI.OPEN_MODAL, handleModalOpen);
+        eventBus.on(EVENTS.UI.RESTART_REQUESTED, restart);
     }
 
-    return { registerEvents };
+    return { registerEvents, start };
 }

@@ -1,6 +1,5 @@
 import { createLoop } from "./loop.js";
 import { createEngine } from "./engine.js";
-import { EVENTS } from "../events/events.js";
 import { createRenderer } from "../ui/renderer.js";
 import { createEventBus } from "../events/event.js";
 import { createLayoutManager } from "../ui/layout.js";
@@ -8,7 +7,6 @@ import { createAudioManager } from "../audio/audio.js";
 import { createGameBus } from "./game-bus.js";
 import { createKeydownHandler } from "../handlers/keydown.js";
 import { createSettingsManager } from "../settings/settings.js";
-
 
 /** @typedef {import("../@types/game.js").GamePublicAPI} GamePublicAPI */
 
@@ -41,40 +39,17 @@ export function createGame(canvas) {
         loop,
         layoutManager,
         audioManager,
-        settingsManager
+        settingsManager,
+        keydownHandler,
     });
 
     gameBus.registerEvents();
 
-    eventBus.on(EVENTS.STATE.GAME_OVER, stop);
-    eventBus.on(EVENTS.UI.RESTART_REQUESTED, restart);
-
     function initialize() {
         const username = localStorage.getItem("username");
-        if (username) return start(username);
-
-        layoutManager.showUsernameModal().then(start);
+        if (username) return gameBus.start(username);
+        layoutManager.showUsernameModal().then(gameBus.start);
     }
 
-    function start(username) {
-        loop.start();
-        keydownHandler.start();
-        if (username) layoutManager.setUsername(username);
-    }
-
-    function stop() {
-        loop.stop();
-        keydownHandler.stop();
-    }
-
-    function restart() {
-        stop();
-        engine.setDefault();
-        loop.setSpeed(settings.speed);
-        start();
-    }
-
-    return {
-        initialize,
-    };
+    return { initialize };
 }
