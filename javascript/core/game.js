@@ -1,9 +1,9 @@
 import { createLoop } from "./loop.js";
 import { createEngine } from "./engine.js";
-import { EVENTS } from "../event/events.js";
-import { createEventBus } from "../event/event.js";
+import { EVENTS } from "../events/events.js";
+import { createEventBus } from "../events/event.js";
 import { createRenderer } from "../ui/renderer.js";
-import { createKeydownHandler } from "./handler.js";
+import { createKeydownHandler } from "../handler/handler.js";
 import { createLayoutManager } from "../ui/layout.js";
 import { createAudioManager } from "../audio/audio.js";
 import { createSettingsManager } from "../settings/settings.js";

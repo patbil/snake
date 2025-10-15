@@ -1,4 +1,4 @@
-import { EVENTS } from "../event/events.js";
+import { EVENTS } from "../events/events.js";
 
 /** @typedef {import('../types/config').GameConfig} GameConfig */
 /** @typedef {import('../types/event').EventBusPublicAPI} EventBusPublicAPI */
