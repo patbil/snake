@@ -1,12 +1,12 @@
 import { createLoop } from "./loop.js";
 import { createEngine } from "./engine.js";
-import { createEventBus } from "./event.js";
-import { createRenderer } from "./renderer.js";
-import { createAudioManager } from "./audio.js";
+import { EVENTS } from "../event/events.js";
+import { createEventBus } from "../event/event.js";
+import { createRenderer } from "../ui/renderer.js";
 import { createKeydownHandler } from "./handler.js";
-import { createSettingsManager } from "./settings.js";
-import { EVENT_DOMAINS } from "./events-definition.js";
-import { createLayoutManager } from "../layout/layout.js";
+import { createLayoutManager } from "../ui/layout.js";
+import { createAudioManager } from "../audio/audio.js";
+import { createSettingsManager } from "../settings/settings.js";
 
 /**
  * Creates and manages the full lifecycle of the Snake game (start, stop, pause, restart).
@@ -77,19 +77,19 @@ export function createGame(canvas) {
     }
 
     function registerEvents() {
-        eventBus.on(EVENT_DOMAINS.MOVE.TOGGLE_PAUSE, handleMovePause);
-        eventBus.on(EVENT_DOMAINS.MOVE.CHANGE_DIRECTION, handleMove);
+        eventBus.on(EVENTS.MOVE.TOGGLE_PAUSE, handleMovePause);
+        eventBus.on(EVENTS.MOVE.CHANGE_DIRECTION, handleMove);
 
-        eventBus.on(EVENT_DOMAINS.STATE.PAUSE, handleStatePause);
-        eventBus.on(EVENT_DOMAINS.STATE.SCORE, handleScore);
-        eventBus.on(EVENT_DOMAINS.STATE.LEVEL_UP, handleLevel);
-        eventBus.on(EVENT_DOMAINS.STATE.GAME_OVER, handleGameOver);
-        eventBus.on(EVENT_DOMAINS.STATE.RESET, handleReset);
+        eventBus.on(EVENTS.STATE.PAUSE, handleStatePause);
+        eventBus.on(EVENTS.STATE.SCORE, handleScore);
+        eventBus.on(EVENTS.STATE.LEVEL_UP, handleLevel);
+        eventBus.on(EVENTS.STATE.GAME_OVER, handleGameOver);
+        eventBus.on(EVENTS.STATE.RESET, handleReset);
 
-        eventBus.on(EVENT_DOMAINS.UI.SETTINGS.SAVE, handleSettingsSave);
-        eventBus.on(EVENT_DOMAINS.UI.SETTINGS.RESET, handleSettingsReset);
-        eventBus.on(EVENT_DOMAINS.UI.OPEN_MODAL, handleModalOpen);
-        eventBus.on(EVENT_DOMAINS.UI.RESTART_REQUESTED, handleRestartRequested);
+        eventBus.on(EVENTS.UI.SETTINGS.SAVE, handleSettingsSave);
+        eventBus.on(EVENTS.UI.SETTINGS.RESET, handleSettingsReset);
+        eventBus.on(EVENTS.UI.OPEN_MODAL, handleModalOpen);
+        eventBus.on(EVENTS.UI.RESTART_REQUESTED, handleRestartRequested);
     }
 
     function handleMove(dir) {

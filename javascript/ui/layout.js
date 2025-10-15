@@ -1,4 +1,4 @@
-import { EVENT_DOMAINS } from "../core/events-definition.js";
+import { EVENTS } from "../event/events.js";
 
 /**
  * Creates the Layout Manager module.
@@ -64,7 +64,7 @@ export function createLayoutManager({ settings, eventBus }) {
                 settingsToSave[path] = value;
             });
 
-        eventBus.emit(EVENT_DOMAINS.UI.SETTINGS.SAVE, settingsToSave);
+        eventBus.emit(EVENTS.UI.SETTINGS.SAVE, settingsToSave);
         toggleElementVisibility(elements.settingsModal, false);
     }
 
@@ -72,12 +72,12 @@ export function createLayoutManager({ settings, eventBus }) {
         if (
             confirm("Are you sure you want to reset all settings to default?")
         ) {
-            eventBus.emit(EVENT_DOMAINS.UI.SETTINGS.RESET);
+            eventBus.emit(EVENTS.UI.SETTINGS.RESET);
         }
     }
 
     function handleRestartGame() {
-        eventBus.emit(EVENT_DOMAINS.UI.RESTART_REQUESTED);
+        eventBus.emit(EVENTS.UI.RESTART_REQUESTED);
     }
 
     function attachEventListeners() {
@@ -112,7 +112,7 @@ export function createLayoutManager({ settings, eventBus }) {
      * @returns {Promise<string>} A Promise that resolves with the validated username string.
      */
     function showUsernameModal() {
-        eventBus.emit(EVENT_DOMAINS.UI.OPEN_MODAL, { type: "username" });
+        eventBus.emit(EVENTS.UI.OPEN_MODAL, { type: "username" });
 
         return new Promise((resolve) => {
             const handleStart = () => {
@@ -154,7 +154,7 @@ export function createLayoutManager({ settings, eventBus }) {
     }
 
     function showSettingsModal() {
-        eventBus.emit(EVENT_DOMAINS.UI.OPEN_MODAL, { type: "settings" });
+        eventBus.emit(EVENTS.UI.OPEN_MODAL, { type: "settings" });
         syncSettingsToModal(settings);
         toggleElementVisibility(elements.settingsModal, true);
     }

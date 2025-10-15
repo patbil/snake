@@ -6,27 +6,47 @@ import { createStateManager } from "./state.js";
  * and managing interactions between the game state and logic.
  *
  * @param {object} settings - The global game settingsuration object.
+ * @param {number} settings.gridSize - The size of the game grid.
+ * @param {number} settings.initialSegmentCount - The starting length of the snake.
+ * @param {number} settings.levelStep - Score threshold to increase level.
  * @param {object} eventBus - The central Event Bus used by the engine to emit state change notifications.
- * @returns {object} The public engine interface.
+ * @returns {object} The public engine interface with game control methods.
  */
 export function createEngine(settings, eventBus) {
     const stateManager = createStateManager(settings, eventBus);
     const gridSize = settings.gridSize;
     let initialized = false;
 
+    /**
+     * Initializes the game engine to its default state.
+     */
     function initialize() {
         setDefault();
         initialized = true;
     }
 
+    /**
+     * Toggles the pause state of the game.
+     * @param {object} options
+     * @param {boolean} options.emitEvent - Whether to emit the pause/resume event.
+     */
     function togglePause({ emitEvent }) {
         stateManager.togglePause({ emitEvent });
     }
 
+    /**
+     * Resets the game state to its default values.
+     */
     function setDefault() {
         stateManager.setDefault();
     }
 
+    /**
+     * Updates the snake's movement direction.
+     * Prevents reversing directly into itself.
+     * @param {number} dx - X direction (-1, 0, 1).
+     * @param {number} dy - Y direction (-1, 0, 1).
+     */
     function setDirection(dx, dy) {
         const currentDir = stateManager.snapshot().direction;
         if (dx + currentDir.x === 0 && dy + currentDir.y === 0) {
@@ -36,7 +56,8 @@ export function createEngine(settings, eventBus) {
     }
 
     /**
-     * Helper to handle collision events (e.g., hitting the body or wall).
+     * Handles collision events (snake hitting itself or walls).
+     * Resets the game state on collision.
      * @returns {object} The state after Game Over reset.
      */
     function handleColision() {
@@ -46,9 +67,13 @@ export function createEngine(settings, eventBus) {
     }
 
     /**
-     * Helper to handle snake movement, grid wrapping, and length management.
-     * @param {object} state - Snapshot of the state before movement.
-     * @returns {object} The new state after movement and tail removal.
+     * Handles snake movement, grid wrapping, and tail removal.
+     * @param {object} state - Snapshot of the current game state.
+     * @param {Array<{x: number, y: number}>} state.segments - Current snake segments.
+     * @param {object} state.direction - Current movement direction.
+     * @param {number} state.direction.x - X movement (-1, 0, 1).
+     * @param {number} state.direction.y - Y movement (-1, 0, 1).
+     * @returns {object} Updated game state after movement.
      */
     function handleMovement({ segments, direction }) {
         const newX = (segments[0].x + direction.x + gridSize) % gridSize;
@@ -69,8 +94,9 @@ export function createEngine(settings, eventBus) {
     }
 
     /**
-     * Helper to handle apple consumption, scoring, and level progression.
-     * @returns {object} The new state after consumption and score updates.
+     * Handles apple consumption, scoring, and level progression.
+     * Updates apple position, score, and potentially level.
+     * @returns {object} Updated game state after consumption.
      */
     function handleConsumption() {
         stateManager.setApple(
@@ -90,8 +116,13 @@ export function createEngine(settings, eventBus) {
     }
 
     /**
-     * The core game loop tick function. Executes one step of the game logic.
-     * @returns {object} The essential state data for the renderer.
+     * Executes one tick of the game loop.
+     * Handles movement, collisions, apple consumption, and state updates.
+     * @returns {object} The minimal state needed for rendering:
+     *  - segments: Array of snake segments
+     *  - apple: Position of the apple
+     *  - score: Current score
+     *  - level: Current level
      */
     function tick() {
         if (!initialized) initialize();

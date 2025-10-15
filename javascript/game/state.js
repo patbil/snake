@@ -1,4 +1,4 @@
-import { EVENT_DOMAINS } from "./events-definition.js";
+import { EVENTS } from "../event/events.js";
 
 /**
  * State Manager Factory for the Snake game.
@@ -51,17 +51,17 @@ export function createStateManager(settings, eventBus) {
         state.prevDirection = { x: 0, y: 0 };
         state.apple = { x: startPos + 5, y: startPos + 5 };
 
-        eventBus.emit(EVENT_DOMAINS.STATE.RESET, snapshot());
+        eventBus.emit(EVENTS.STATE.RESET, snapshot());
     }
 
     function addHead(x, y) {
         state.segments.unshift({ x, y });
-        eventBus.emit(EVENT_DOMAINS.STATE.SEGMENTS, snapshot());
+        eventBus.emit(EVENTS.STATE.SEGMENTS, snapshot());
     }
 
     function removeTail() {
         state.segments.pop();
-        eventBus.emit(EVENT_DOMAINS.STATE.SEGMENTS, snapshot());
+        eventBus.emit(EVENTS.STATE.SEGMENTS, snapshot());
     }
 
     function setDirection(x, y) {
@@ -79,7 +79,7 @@ export function createStateManager(settings, eventBus) {
         }
 
         state.direction = { x, y };
-        eventBus.emit(EVENT_DOMAINS.STATE.DIRECTION, { x, y });
+        eventBus.emit(EVENTS.STATE.DIRECTION, { x, y });
     }
 
     function togglePause({ emitEvent }) {
@@ -93,29 +93,29 @@ export function createStateManager(settings, eventBus) {
         }
 
         if (emitEvent) {
-            eventBus.emit(EVENT_DOMAINS.STATE.PAUSE, state.pause);
+            eventBus.emit(EVENTS.STATE.PAUSE, state.pause);
         }
     }
 
     function setApple(x, y) {
         state.apple = { x, y };
-        eventBus.emit(EVENT_DOMAINS.STATE.APPLE, { x, y });
+        eventBus.emit(EVENTS.STATE.APPLE, { x, y });
     }
 
     function increaseScore() {
         state.score += 1;
-        eventBus.emit(EVENT_DOMAINS.STATE.SCORE, state.score);
+        eventBus.emit(EVENTS.STATE.SCORE, state.score);
     }
 
     function increaseLevel() {
         state.level += 1;
-        eventBus.emit(EVENT_DOMAINS.STATE.LEVEL_UP, state.level);
+        eventBus.emit(EVENTS.STATE.LEVEL_UP, state.level);
     }
 
     function gameOver() {
         state.pause = true;
         state.direction = { x: 0, y: 0 };
-        eventBus.emit(EVENT_DOMAINS.STATE.GAME_OVER, snapshot());
+        eventBus.emit(EVENTS.STATE.GAME_OVER, snapshot());
     }
 
     return {

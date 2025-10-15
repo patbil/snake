@@ -1,4 +1,4 @@
-import { EVENT_DOMAINS } from "./events-definition.js";
+import { EVENTS } from "../event/events.js";
 
 /**
  * Creates the Keydown Handler module.
@@ -27,14 +27,14 @@ export function createKeydownHandler(eventBus) {
         }
 
         if (key === " ") {
-            eventBus.emit(EVENT_DOMAINS.MOVE.TOGGLE_PAUSE, { emitEvent: true });
+            eventBus.emit(EVENTS.MOVE.TOGGLE_PAUSE, { emitEvent: true });
             return;
         }
 
         const vector = directionMap[key];
         if (vector) {
             const [x, y] = vector;
-            eventBus.emit(EVENT_DOMAINS.MOVE.CHANGE_DIRECTION, { x, y });
+            eventBus.emit(EVENTS.MOVE.CHANGE_DIRECTION, { x, y });
         }
     };
 
