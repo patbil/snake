@@ -15,12 +15,8 @@ import { createStateManager } from "./state.js";
 export function createEngine(eventBus, settings) {
     const stateManager = createStateManager(eventBus, settings);
     const gridCount = settings.canvas.grid;
-    let initialized = false;
 
-    function initialize() {
-        setDefault();
-        initialized = true;
-    }
+    setDefault();
 
     function togglePause({ emitEvent }) {
         stateManager.togglePause({ emitEvent });
@@ -80,8 +76,6 @@ export function createEngine(eventBus, settings) {
     }
 
     function tick() {
-        if (!initialized) initialize();
-
         let state = stateManager.snapshot();
         if (state.direction.x !== 0 || state.direction.y !== 0) {
             state = handleMovement(state);
@@ -104,6 +98,7 @@ export function createEngine(eventBus, settings) {
             level: state.level,
         };
     }
+
 
     return { tick, setDirection, togglePause, setDefault };
 }
