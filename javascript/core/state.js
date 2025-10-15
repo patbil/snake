@@ -1,6 +1,6 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import('../types/config').GameConfig} GameConfig */
+/** @typedef {import('../types/state').StateConfig} StateConfig */
 /** @typedef {import('../types/event').EventBusPublicAPI} EventBusPublicAPI */
 /** @typedef {import('../types/state').GameStatePublicAPI} GameStatePublicAPI */
 
@@ -8,8 +8,8 @@ import { EVENTS } from "../events/events.js";
  * State Manager Factory for the Snake game.
  * Encapsulates all game state, manages mutations, and emits events via EventBus.
  *
- * @param {GameConfig} settings - Game configuration (e.g., initialSegmentCount, canvas.grid)
  * @param {EventBusPublicAPI} eventBus - Event Bus for emitting state changes
+ * @param {StateConfig} config - State configuration.
  * @returns {GameStatePublicAPI}
  */
 export function createStateManager(

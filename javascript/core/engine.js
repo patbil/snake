@@ -1,6 +1,6 @@
 import { createStateManager } from "./state.js";
 
-/** @typedef {import('../types/config').GameConfig} GameConfig */
+/** @typedef {import('../types/engine').EngineConfig} EngineConfig */
 /** @typedef {import('../types/events').EventBusPublicAPI} EventBus */
 /** @typedef {import('../types/engine').EnginePublicAPI} EnginePublicAPI */
 
@@ -8,11 +8,14 @@ import { createStateManager } from "./state.js";
  * Creates the Game Engine module.
  * Controls the game loop, state updates, and interactions with the Event Bus.
  *
- * @param {GameConfig} settings - Global game configuration object.
  * @param {EventBus} eventBus - Central Event Bus for emitting state change events.
+ * @param {EngineConfig} config - Engine configuration object.
  * @returns {EnginePublicAPI}
  */
-export function createEngine(eventBus, { gridCount, initialSegmentCount }) {
+export function createEngine(
+    eventBus,
+    { gridCount, initialSegmentCount, levelStep }
+) {
     const stateManager = createStateManager(eventBus, {
         gridCount,
         initialSegmentCount,
@@ -73,7 +76,7 @@ export function createEngine(eventBus, { gridCount, initialSegmentCount }) {
         stateManager.increaseScore();
         let newState = stateManager.snapshot();
 
-        if (newState.score % settings.levelStep === 0) {
+        if (newState.score % levelStep === 0) {
             stateManager.increaseLevel();
             newState = stateManager.snapshot();
         }

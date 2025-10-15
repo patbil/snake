@@ -1,6 +1,6 @@
 /** @typedef {import('./engine').TickSnapshot} TickSnapshot */
 /** @typedef {import('./config').GameConfig} GameConfig */
-/** @typedef {import('./engine').TickSnapshot} TickSnapshot */
+/** @typedef {import('./event').EventBusPublicAPI} EventBusPublicAPI */
 
 /**
  * @typedef {Object} LayoutDependencies

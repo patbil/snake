@@ -1,13 +1,14 @@
 import { createLoop } from "./loop.js";
 import { createEngine } from "./engine.js";
 import { EVENTS } from "../events/events.js";
-import { createEventBus } from "../events/event.js";
 import { createRenderer } from "../ui/renderer.js";
-import { createKeydownHandler } from "../handler/keydown.js";
+import { createEventBus } from "../events/event.js";
 import { createLayoutManager } from "../ui/layout.js";
 import { createAudioManager } from "../audio/audio.js";
-import { createSettingsManager } from "../settings/settings.js";
 import { createGameEventHandler } from "./game-handler.js";
+import { createKeydownHandler } from "../handler/keydown.js";
+import { createSettingsManager } from "../settings/settings.js";
+
 
 /** @typedef {import("../types/game").GamePublicAPI} GamePublicAPI */
 
@@ -25,12 +26,13 @@ export function createGame(canvas) {
 
     const keydownHandler = createKeydownHandler(eventBus);
     const audioManager = createAudioManager(settings.audio);
-    const layoutManager = createLayoutManager({ settings, eventBus });
+    const layoutManager = createLayoutManager({ settingsManager, eventBus });
     const renderer = createRenderer(canvas, settings.colors, settings.canvas);
 
     const engine = createEngine(eventBus, {
         gridCount: settings.canvas.grid,
         initialSegmentCount: settings.initialSegmentCount,
+        levelStep: settings.levelStep,
     });
 
     const loop = createLoop(() => {
@@ -43,8 +45,8 @@ export function createGame(canvas) {
         engine,
         loop,
         layoutManager,
-        settingsManager,
         audioManager,
+        settingsManager
     });
 
     eventHandler.registerEvents();
@@ -73,6 +75,11 @@ export function createGame(canvas) {
     function restart() {
         stop();
         engine.setDefault();
+        
+        // Update settings-dependent components with current values
+        const currentSettings = settingsManager.getSettings();
+        loop.setSpeed(currentSettings.initialSpeed);
+        
         start();
     }
 

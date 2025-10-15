@@ -1,4 +1,4 @@
-import { EVENTS } from "../events/events.js";
+import { EVENTS } from "../event/events.js";
 
 /** @typedef {import('../types/layout').LayoutDependencies} LayoutDependencies */
 /** @typedef {import('../types/layout').LayoutManagerPublicAPI} LayoutManagerPublicAPI */

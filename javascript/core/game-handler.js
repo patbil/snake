@@ -1,7 +1,7 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import("../types/game-handler").GameHandlerDependencies} GameHandlerDependencies */
 /** @typedef {import("../types/game-handler").GameHandlerPublicAPI} GameHandlerPublicAPI */
+/** @typedef {import("../types/game-handler").GameHandlerDependencies} GameHandlerDependencies */
 
 /**
  * Module that binds events emitted by the Engine and UI
@@ -39,6 +39,7 @@ export function createGameEventHandler({
         layoutManager.setLevel(level);
         audioManager.play("levelup");
 
+        const settings = settingsManager.getSettings();
         const { speed } = loop.snapshot();
         const newSpeed = Math.max(
             settings.maxSpeed,
