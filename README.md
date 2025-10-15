@@ -2,6 +2,15 @@
 
 A simple implementation of the classic Snake game (originally released in 1976), built for the web using HTML, CSS, and JavaScript. The project is intentionally modular: core game logic, rendering, input and layout are separated so the code is easier to test and maintain.
 
+## ✨ Features
+
+- 🎮 Classic Snake gameplay with modern UI
+- 🏆 **Global Leaderboard** - Share scores with all players using GitHub Gist
+- ⚙️ Customizable settings (speed, colors, audio)
+- 🎵 Sound effects
+- 📱 Responsive design
+- 🌙 Dark theme with glassmorphism UI
+
 ---
 
 ## Quick start (local)
@@ -23,6 +32,30 @@ npx serve .
 ```
 
 3. Open the address provided by the server (for example `http://localhost:5000`).
+
+4. **(Optional)** Setup global leaderboard:
+   - Open `setup-github-scores.html` in your browser
+   - Follow the instructions to configure GitHub Gist
+   - See [GITHUB_SCORES_SETUP.md](GITHUB_SCORES_SETUP.md) for detailed guide
+
+---
+
+## 🏆 Leaderboard Setup
+
+The game includes a global leaderboard system that stores scores using GitHub Gist. This allows all players to share and compete on the same leaderboard without needing a complex backend.
+
+**Quick Setup:**
+1. Open `setup-github-scores.html` in your browser
+2. Follow the step-by-step instructions
+3. Play and compete!
+
+**For detailed instructions, see:** [GITHUB_SCORES_SETUP.md](GITHUB_SCORES_SETUP.md)
+
+**Alternative backends:** The score system is modular and can easily be adapted to use:
+- JSONBin.io
+- Firebase Realtime Database
+- Supabase
+- Your own REST API
 
 ---
 
