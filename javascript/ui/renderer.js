@@ -1,6 +1,6 @@
-/** @typedef {import('../types/config').ColorConfig} ColorConfig */
-/** @typedef {import('../types/config').CanvasConfig} CanvasConfig */
-/** @typedef {import('../types/renderer').RendererPublicAPI} RendererPublicAPI */
+/** @typedef {import('../@types/config').ColorConfig} ColorConfig */
+/** @typedef {import('../@types/config').CanvasConfig} CanvasConfig */
+/** @typedef {import('../@types/renderer').RendererPublicAPI} RendererPublicAPI */
 
 /**
  * Creates the Renderer module, responsible for drawing the game state onto a Canvas element.

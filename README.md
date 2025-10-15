@@ -1,92 +1,103 @@
 # Snake — Browser Game
 
-A simple implementation of the classic Snake game (originally released in 1976), built for the web using HTML, CSS, and JavaScript. The project is intentionally modular: core game logic, rendering, input and layout are separated so the code is easier to test and maintain.
+A modern implementation of the classic Snake game (originally released in 1976), built with vanilla JavaScript using clean architecture principles. The project demonstrates professional code organization with modular design, event-driven architecture, and separation of concerns.
 
-## ✨ Features
+## Features
 
-- 🎮 Classic Snake gameplay with modern UI
-- 🏆 **Global Leaderboard** - Share scores with all players using GitHub Gist
-- ⚙️ Customizable settings (speed, colors, audio)
-- 🎵 Sound effects
-- 📱 Responsive design
-- 🌙 Dark theme with glassmorphism UI
+- **Classic Snake gameplay** with modern UI/UX
+- **Customizable settings** — adjust speed, colors, and audio
+- **Sound effects** — immersive audio feedback
+- **Responsive design** — works on different screen sizes
+- **Score tracking** with level progression
 
 ---
 
-## Quick start (local)
+## Quick Start
 
-This project does not require a build step. Serve the files with a static server and open the page in your browser.
+This project requires **no build step** — just serve the files with any static server.
 
-1. Clone the repository:
-
-```bash
-git clone <repo-url>
-cd snake
-```
-
-2. Start a static server (for example via `npx serve` or VS Code Live Server):
+### Option 1: Using npx serve
 
 ```powershell
 npx serve .
-# or use Live Server in VS Code
 ```
 
-3. Open the address provided by the server (for example `http://localhost:5000`).
+Then open `http://localhost:3000` in your browser.
 
-4. **(Optional)** Setup global leaderboard:
-   - Open `setup-github-scores.html` in your browser
-   - Follow the instructions to configure GitHub Gist
-   - See [GITHUB_SCORES_SETUP.md](GITHUB_SCORES_SETUP.md) for detailed guide
+### Option 2: Using VS Code Live Server
 
----
+1. Install the **Live Server** extension in VS Code
+2. Right-click on `index.html` and select **"Open with Live Server"**
 
-## 🏆 Leaderboard Setup
+### Option 3: Using Python
 
-The game includes a global leaderboard system that stores scores using GitHub Gist. This allows all players to share and compete on the same leaderboard without needing a complex backend.
+```powershell
+python -m http.server 8000
+```
 
-**Quick Setup:**
-1. Open `setup-github-scores.html` in your browser
-2. Follow the step-by-step instructions
-3. Play and compete!
-
-**For detailed instructions, see:** [GITHUB_SCORES_SETUP.md](GITHUB_SCORES_SETUP.md)
-
-**Alternative backends:** The score system is modular and can easily be adapted to use:
-- JSONBin.io
-- Firebase Realtime Database
-- Supabase
-- Your own REST API
+Then open `http://localhost:8000` in your browser.
 
 ---
 
-## Project structure (overview)
+## Project Structure
 
-- `index.html` — main HTML file
-- `css/` — styles (main theme and modal styles)
-- `javascript/index.js` — entry point
-- `javascript/core/` — core game modules
-  - `config.js` — game configuration (grid size, speed, colors)
-  - `state.factory.js` — an instance-based state manager
-  - `engine.js` — game logic (movement, collisions, scoring)
-  - `renderer.js` — drawing the game state to a canvas
-  - `loop.js` — game loop controller (start/stop/setSpeed)
-  - `input.js` — keyboard input / input adapter
-- `javascript/layout/` — DOM updates (score, level, settings modal)
+```
+snake/
+├── index.html                      # Main HTML entry point
+├── css/
+│   ├── main.css                    # Core styles and theme
+│   └── modal.css                   # Modal component styles
+└── javascript/
+    ├── index.js                    # Application entry point
+    ├── core/                       
+    │   ├── game.js                 # Main game orchestrator
+    │   ├── game-bus.js             # Event coordinator (connects all modules)
+    │   ├── engine.js               # Game logic (movement, collisions, scoring)
+    │   ├── state.js                # Instance-based state manager
+    │   └── loop.js                 # Game loop controller
+    ├── ui/                         
+    │   ├── renderer.js             # Canvas rendering
+    │   └── layout.js               # DOM updates
+    ├── handlers/                   
+    │   └── keydown.js              # Keyboard input handler
+    ├── events/                     
+    │   ├── event.js                # Event bus
+    │   └── events.js               # Event constants
+    ├── settings/                   
+    │   ├── settings.js             # Settings manager
+    │   └── config.js               # Default configuration
+    ├── audio/                      
+    │   └── audio.js                # Audio manager
+    └── @types/                     # JSDoc type definitions
+        ├── game.js
+        ├── game-bus.js
+        ├── engine.js
+        └── ...
+```
 
-Design principle: keep game logic independent from the DOM. The engine produces snapshots/events; renderer and layout subscribe and update the UI.
+### Design Principles
 
----
+- **Separation of Concerns**: Game logic is independent from the DOM
+- **Event-Driven Architecture**: Modules communicate via EventBus
+- **Factory Pattern**: All modules use `create*` functions for instantiation
+- **Type Safety**: Comprehensive JSDoc type definitions (no TypeScript needed)
 
-## Development notes
 
-- Run the game with a local static server (see Quick start).
-- When adding features, prefer adding them to `javascript/core/` as modular units: keep logic in `engine`, drawing in `renderer`, and avoid DOM access from `core` modules.
-- Prefer instance-based state (the `state.factory.js`) over a global singleton — it simplifies unit testing.
+## Development
 
----
+### Type Safety with JSDoc
 
-## Suggested next improvements
+This project uses JSDoc for type checking without TypeScript:
 
-- Replace `setInterval` loop with a `requestAnimationFrame` fixed timestep loop to improve pause control and timing stability.
-- Add `togglePause()` to engine and wire the space key to it.
-- Add unit tests (Vitest/Jest) for engine behaviors (movement, apple eating, tail trimming).
+```javascript
+/** @typedef {import("../@types/engine.js").EnginePublicAPI} EnginePublicAPI */
+
+/**
+ * @param {EnginePublicAPI} engine
+ * @returns {void}
+ */
+function doSomething(engine) {
+    // VS Code provides full autocomplete and type checking
+}
+
+**Enjoy the game! 🐍🎮**

@@ -1,4 +1,4 @@
-/** @typedef {import('../types/events').GameEvents} GameEvents */
+/** @typedef {import('./events').GameEvents} GameEvents */
 
 /**
  * @typedef {Object} EventBusPublicAPI

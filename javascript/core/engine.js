@@ -1,8 +1,8 @@
 import { createStateManager } from "./state.js";
 
-/** @typedef {import('../types/config').GameConfig} GameConfig */
-/** @typedef {import('../types/events').EventBusPublicAPI} EventBus */
-/** @typedef {import('../types/engine').EnginePublicAPI} EnginePublicAPI */
+/** @typedef {import('../@types/config.js').GameConfig} GameConfig */
+/** @typedef {import('../@types/events.js').EventBusPublicAPI} EventBus */
+/** @typedef {import('../@types/engine.js').EnginePublicAPI} EnginePublicAPI */
 
 /**
  * Creates the Game Engine module.
@@ -71,7 +71,7 @@ export function createEngine(eventBus, settings) {
         stateManager.increaseScore();
         let newState = stateManager.snapshot();
 
-        if (newState.score % levelStep === 0) {
+        if (newState.score % settings.levelStep === 0) {
             stateManager.increaseLevel();
             newState = stateManager.snapshot();
         }

@@ -5,12 +5,12 @@ import { createRenderer } from "../ui/renderer.js";
 import { createEventBus } from "../events/event.js";
 import { createLayoutManager } from "../ui/layout.js";
 import { createAudioManager } from "../audio/audio.js";
-import { createGameEventHandler } from "./game-handler.js";
-import { createKeydownHandler } from "../handler/keydown.js";
+import { createGameBus } from "./game-bus.js";
+import { createKeydownHandler } from "../handlers/keydown.js";
 import { createSettingsManager } from "../settings/settings.js";
 
 
-/** @typedef {import("../types/game").GamePublicAPI} GamePublicAPI */
+/** @typedef {import("../@types/game.js").GamePublicAPI} GamePublicAPI */
 
 /**
  * Creates and manages the full lifecycle of the Snake game (start, stop, pause, restart).
@@ -35,7 +35,7 @@ export function createGame(canvas) {
         renderer.render(snapshot);
     }, settings.initialSpeed);
 
-    const eventHandler = createGameEventHandler({
+    const gameBus = createGameBus({
         eventBus,
         engine,
         loop,
@@ -44,7 +44,7 @@ export function createGame(canvas) {
         settingsManager
     });
 
-    eventHandler.registerEvents();
+    gameBus.registerEvents();
 
     eventBus.on(EVENTS.STATE.GAME_OVER, stop);
     eventBus.on(EVENTS.UI.RESTART_REQUESTED, restart);

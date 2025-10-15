@@ -1,4 +1,4 @@
-/** @typedef {import('../types/event').EventBusPublicAPI} EventBusPublicAPI */
+/** @typedef {import('../@types/event').EventBusPublicAPI} EventBusPublicAPI */
 
 /**
  * Creates and returns a strongly-typed Event Bus object.

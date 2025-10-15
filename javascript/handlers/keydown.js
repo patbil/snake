@@ -1,7 +1,7 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import('../types/event.js').EventBusPublicAPI} EventBus */
-/** @typedef {import('../types/handler.js').HandlerPublicAPI} HandlerPublicAPI */
+/** @typedef {import('../@types/event.js').EventBusPublicAPI} EventBus */
+/** @typedef {import('../@types/handler.js').HandlerPublicAPI} HandlerPublicAPI */
 
 /**
  * Creates the Keydown Handler module.

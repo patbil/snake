@@ -1,4 +1,4 @@
-/** @typedef {import('../types/loop').LoopPublicAPI} LoopPublicAPI */
+/** @typedef {import('../@types/loop').LoopPublicAPI} LoopPublicAPI */
 
 /**
  * Creates the Game Loop module, wrapping setInterval functionality.

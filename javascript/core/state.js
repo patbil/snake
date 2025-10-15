@@ -1,8 +1,8 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import('../types/config').GameConfig} GameConfig */
-/** @typedef {import('../types/event').EventBusPublicAPI} EventBusPublicAPI */
-/** @typedef {import('../types/state').GameStatePublicAPI} GameStatePublicAPI */
+/** @typedef {import('../@types/config.js').GameConfig} GameConfig */
+/** @typedef {import('../@types/event.js').EventBusPublicAPI} EventBusPublicAPI */
+/** @typedef {import('../@types/state.js').GameStatePublicAPI} GameStatePublicAPI */
 
 /**
  * State Manager Factory for the Snake game.

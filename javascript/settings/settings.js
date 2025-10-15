@@ -1,6 +1,6 @@
 import { config } from "./config.js";
 
-/** @typedef {import('../types/settings').SettingsManagerPublicAPI} SettingsManagerPublicAPI */
+/** @typedef {import('../@types/settings.js').SettingsManagerPublicAPI} SettingsManagerPublicAPI */
 
 /**
  * Creates the Settings Manager module.

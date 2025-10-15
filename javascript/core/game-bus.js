@@ -1,15 +1,15 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import("../types/game-handler").GameHandlerPublicAPI} GameHandlerPublicAPI */
-/** @typedef {import("../types/game-handler").GameHandlerDependencies} GameHandlerDependencies */
+/** @typedef {import("../@types/game-bus.js").GameBusPublicAPI} GameBusPublicAPI */
+/** @typedef {import("../@types/game-bus.js").GameBusDependencies} GameBusDependencies */
 
 /**
  * Module that binds events emitted by the Engine and UI
  * to the corresponding actions executed by the Renderer, AudioManager, and Loop.
- * * @param {GameHandlerDependencies} dependencies
- * @returns {GameHandlerPublicAPI}
+ * @param {GameBusDependencies} dependencies
+ * @returns {GameBusPublicAPI}
  */
-export function createGameEventHandler({
+export function createGameBus({
     eventBus,
     engine,
     loop,

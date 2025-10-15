@@ -1,5 +1,5 @@
-/** @typedef {import('../types/config').AudioConfig} AudioConfig */
-/** @typedef {import('../types/audio').AudioManagerPublicAPI} AudioManagerPublicAPI */
+/** @typedef {import('../@types/config').AudioConfig} AudioConfig */
+/** @typedef {import('../@types/audio').AudioManagerPublicAPI} AudioManagerPublicAPI */
 
 /**
  * Creates the Audio Manager module.

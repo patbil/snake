@@ -1,4 +1,4 @@
-/** @typedef {import('../types/events').GameEvents} GameEvents */
+/** @typedef {import('../@types/events').GameEvents} GameEvents */
 
 /**
  * Centralized event constants for the Snake Game.

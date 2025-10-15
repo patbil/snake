@@ -1,4 +1,4 @@
-/** @typedef {import('../types/config').GameConfig} GameConfig */
+/** @typedef {import('../@types/config').GameConfig} GameConfig */
 
 /**
  * Global configuration settings for the Snake Game Engine.

@@ -6,7 +6,7 @@
 /** @typedef {import('./settings').SettingsManagerPublicAPI} SettingsManagerPublicAPI */
 
 /**
- * @typedef {Object} GameHandlerDependencies
+ * @typedef {Object} GameBusDependencies
  * @property {EventBusPublicAPI} eventBus
  * @property {EnginePublicAPI} engine
  * @property {LoopPublicAPI} loop
@@ -16,7 +16,7 @@
  */
 
 /**
- * @typedef {Object} GameHandlerPublicAPI
+ * @typedef {Object} GameBusPublicAPI
  * @property {() => void} registerEvents - Registers all core game events and their corresponding handlers.
  */
 

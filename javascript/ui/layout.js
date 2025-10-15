@@ -1,8 +1,8 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import('../types/config').GameConfig} GameConfig */
-/** @typedef {import('../types/event').EventBusPublicAPI} EventBusPublicAPI */
-/** @typedef {import('../types/layout').LayoutManagerPublicAPI} LayoutManagerPublicAPI */
+/** @typedef {import('../@types/config.js').GameConfig} GameConfig */
+/** @typedef {import('../@types/event.js').EventBusPublicAPI} EventBusPublicAPI */
+/** @typedef {import('../@types/layout.js').LayoutManagerPublicAPI} LayoutManagerPublicAPI */
 
 /**
  * Creates the Layout Manager module.
@@ -24,13 +24,13 @@ export function createLayoutManager(eventBus, settings) {
             usernameModal: document.getElementById("usernameModal"),
             settingsModal: document.getElementById("settingsModal"),
             settingsButton: document.getElementById("settings"),
-            userNameInput: document.getElementById("userNameInput"),
+            usernameInput: document.getElementById("usernameInput"),
             startGameButton: document.getElementById("startGameButton"),
             usernameError: document.getElementById("usernameError"),
             saveSettingsButton: document.getElementById("saveSettingsButton"),
             resetSettingsButton: document.getElementById("resetSettingsButton"),
             pauseElements: document.getElementById("pauseElements"),
-            gameoverElements: document.getElementById("gameoverElements"),
+            gameOverElements: document.getElementById("gameOverElements"),
             restartButton: document.getElementById("restartButton"),
             finalLevel: document.getElementById("finalLevel"),
             finalScore: document.getElementById("finalScore"),
@@ -56,8 +56,6 @@ export function createLayoutManager(eventBus, settings) {
                 if (input.type === "checkbox") value = input.checked;
                 else if (input.type === "number") value = parseInt(input.value);
                 else value = input.value;
-
-                console.log(value);
 
                 if (value === undefined || value === null) return;
                 settingsToSave[path] = value;
@@ -104,7 +102,7 @@ export function createLayoutManager(eventBus, settings) {
 
         return new Promise((resolve) => {
             const handleStart = () => {
-                const username = elements.userNameInput.value.trim();
+                const username = elements.usernameInput.value.trim();
                 if (username.length < 2) {
                     elements.usernameError.textContent =
                         "Name must be at least 2 characters long!";
@@ -121,7 +119,7 @@ export function createLayoutManager(eventBus, settings) {
                     "click",
                     handleStart
                 );
-                elements.userNameInput.removeEventListener(
+                elements.usernameInput.removeEventListener(
                     "keydown",
                     handleKeydown
                 );
@@ -136,8 +134,8 @@ export function createLayoutManager(eventBus, settings) {
 
             toggleElementVisibility(elements.usernameModal, true);
             elements.startGameButton.addEventListener("click", handleStart);
-            elements.userNameInput.addEventListener("keydown", handleKeydown);
-            elements.userNameInput.focus();
+            elements.usernameInput.addEventListener("keydown", handleKeydown);
+            elements.usernameInput.focus();
         });
     }
 
@@ -162,7 +160,7 @@ export function createLayoutManager(eventBus, settings) {
         setLevel(0);
         setScore(0);
         toggleElementVisibility(elements.pauseElements, false);
-        toggleElementVisibility(elements.gameoverElements, false);
+        toggleElementVisibility(elements.gameOverElements, false);
         toggleElementVisibility(elements.stateModal, false);
         toggleElementVisibility(elements.usernameModal, false);
         toggleElementVisibility(elements.settingsModal, false);
@@ -190,7 +188,7 @@ export function createLayoutManager(eventBus, settings) {
 
     function showGameOverModal(snapshot) {
         toggleElementVisibility(elements.stateModal, true);
-        toggleElementVisibility(elements.gameoverElements, true, "block");
+        toggleElementVisibility(elements.gameOverElements, true, "block");
         elements.finalLevel.textContent = snapshot.level;
         elements.finalScore.textContent = snapshot.score;
     }
