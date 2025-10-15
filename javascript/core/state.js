@@ -12,7 +12,10 @@ import { EVENTS } from "../events/events.js";
  * @param {EventBusPublicAPI} eventBus - Event Bus for emitting state changes
  * @returns {GameStatePublicAPI}
  */
-export function createStateManager(settings, eventBus) {
+export function createStateManager(
+    eventBus,
+    { gridCount, initialSegmentCount }
+) {
     const state = {
         pause: false,
         score: 0,
@@ -39,9 +42,9 @@ export function createStateManager(settings, eventBus) {
         state.score = 0;
         state.pause = false;
 
-        const startPos = Math.floor(settings.canvas.grid / 2);
+        const startPos = Math.floor(gridCount / 2);
         state.segments = Array.from(
-            { length: settings.initialSegmentCount },
+            { length: initialSegmentCount },
             (_, i) => ({
                 x: startPos - i,
                 y: startPos,

@@ -12,9 +12,11 @@ import { createStateManager } from "./state.js";
  * @param {EventBus} eventBus - Central Event Bus for emitting state change events.
  * @returns {EnginePublicAPI}
  */
-export function createEngine(settings, eventBus) {
-    const stateManager = createStateManager(settings, eventBus);
-    const gridCount = settings.canvas.grid;
+export function createEngine(eventBus, { gridCount, initialSegmentCount }) {
+    const stateManager = createStateManager(eventBus, {
+        gridCount,
+        initialSegmentCount,
+    });
     let initialized = false;
 
     function initialize() {
@@ -38,7 +40,7 @@ export function createEngine(settings, eventBus) {
         stateManager.setDirection(dx, dy);
     }
 
-    function handleCollision() {     
+    function handleCollision() {
         stateManager.gameOver();
         const newState = stateManager.snapshot();
         return newState;
@@ -53,7 +55,7 @@ export function createEngine(settings, eventBus) {
 
         while (
             newState.segments.length >
-            settings.initialSegmentCount + newState.score
+            initialSegmentCount + newState.score
         ) {
             stateManager.removeTail();
             newState = stateManager.snapshot();

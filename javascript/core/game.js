@@ -3,10 +3,11 @@ import { createEngine } from "./engine.js";
 import { EVENTS } from "../events/events.js";
 import { createEventBus } from "../events/event.js";
 import { createRenderer } from "../ui/renderer.js";
-import { createKeydownHandler } from "../handler/handler.js";
+import { createKeydownHandler } from "../handler/keydown.js";
 import { createLayoutManager } from "../ui/layout.js";
 import { createAudioManager } from "../audio/audio.js";
 import { createSettingsManager } from "../settings/settings.js";
+import { createGameEventHandler } from "./game-handler.js";
 
 /** @typedef {import("../types/game").GamePublicAPI} GamePublicAPI */
 
@@ -22,18 +23,34 @@ export function createGame(canvas) {
     const settingsManager = createSettingsManager();
     const settings = settingsManager.getSettings();
 
-    const engine = createEngine(settings, eventBus);
-    const renderer = createRenderer(canvas, settings.colors, settings.canvas);
-    const audioManager = createAudioManager(settings.audio);
     const keydownHandler = createKeydownHandler(eventBus);
+    const audioManager = createAudioManager(settings.audio);
     const layoutManager = createLayoutManager({ settings, eventBus });
+    const renderer = createRenderer(canvas, settings.colors, settings.canvas);
+
+    const engine = createEngine(eventBus, {
+        gridCount: settings.canvas.grid,
+        initialSegmentCount: settings.initialSegmentCount,
+    });
 
     const loop = createLoop(() => {
         const snapshot = engine.tick();
         renderer.render(snapshot);
     }, settings.initialSpeed);
 
-    registerEvents();
+    const eventHandler = createGameEventHandler({
+        eventBus,
+        engine,
+        loop,
+        layoutManager,
+        settingsManager,
+        audioManager,
+    });
+
+    eventHandler.registerEvents();
+
+    eventBus.on(EVENTS.STATE.GAME_OVER, stop);
+    eventBus.on(EVENTS.UI.RESTART_REQUESTED, restart);
 
     function initialize() {
         const username = localStorage.getItem("username");
@@ -57,81 +74,6 @@ export function createGame(canvas) {
         stop();
         engine.setDefault();
         start();
-    }
-
-    function registerEvents() {
-        eventBus.on(EVENTS.MOVE.TOGGLE_PAUSE, handleMovePause);
-        eventBus.on(EVENTS.MOVE.CHANGE_DIRECTION, handleMove);
-
-        eventBus.on(EVENTS.STATE.PAUSE, handleStatePause);
-        eventBus.on(EVENTS.STATE.SCORE, handleScore);
-        eventBus.on(EVENTS.STATE.LEVEL_UP, handleLevel);
-        eventBus.on(EVENTS.STATE.GAME_OVER, handleGameOver);
-        eventBus.on(EVENTS.STATE.RESET, handleReset);
-
-        eventBus.on(EVENTS.UI.SETTINGS.SAVE, handleSettingsSave);
-        eventBus.on(EVENTS.UI.SETTINGS.RESET, handleSettingsReset);
-        eventBus.on(EVENTS.UI.OPEN_MODAL, handleModalOpen);
-        eventBus.on(EVENTS.UI.RESTART_REQUESTED, handleRestartRequested);
-    }
-
-    function handleMove(dir) {
-        engine.setDirection(dir.x, dir.y);
-    }
-
-    function handleMovePause({ emitEvent }) {
-        engine.togglePause({ emitEvent });
-    }
-
-    function handleStatePause(isPaused) {
-        layoutManager.togglePauseModal(isPaused);
-        isPaused ? loop.stop() : loop.start();
-    }
-
-    function handleScore(score) {
-        layoutManager.setScore(score);
-        audioManager.play("eat");
-    }
-
-    function handleLevel(level) {
-        layoutManager.setLevel(level);
-        audioManager.play("levelup");
-
-        const { speed } = loop.snapshot();
-        const newSpeed = Math.max(
-            settings.maxSpeed,
-            speed - settings.speedStep
-        );
-        loop.setSpeed(newSpeed);
-    }
-
-    function handleGameOver(snapshot) {
-        stop();
-        layoutManager.showGameOverModal(snapshot);
-        audioManager.play("gameover");
-    }
-
-    function handleReset() {
-        layoutManager.resetAll();
-    }
-
-    function handleSettingsSave(newSettings) {
-        settingsManager.saveSettings(newSettings);
-        restart();
-    }
-
-    function handleSettingsReset() {
-        settingsManager.restoreSettings();
-        restart();
-    }
-
-    function handleModalOpen({ type }) {
-        if (type !== "settings") return;
-        engine.togglePause({ emitEvent: false });
-    }
-
-    function handleRestartRequested() {
-        restart();
     }
 
     return {
