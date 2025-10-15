@@ -8,11 +8,14 @@ import { createLayoutManager } from "../ui/layout.js";
 import { createAudioManager } from "../audio/audio.js";
 import { createSettingsManager } from "../settings/settings.js";
 
+/** @typedef {import("../types/game").GamePublicAPI} GamePublicAPI */
+
 /**
  * Creates and manages the full lifecycle of the Snake game (start, stop, pause, restart).
- * Maintains encapsulation of the core game state.
+ * Encapsulates core game state and handles all interactions between engine, UI, and audio.
+ *
  * @param {HTMLCanvasElement} canvas - The canvas element for rendering.
- * @returns {object} The public control interface { initialize }.
+ * @returns {GamePublicAPI}
  */
 export function createGame(canvas) {
     const eventBus = createEventBus();
@@ -20,13 +23,10 @@ export function createGame(canvas) {
     const settings = settingsManager.getSettings();
 
     const engine = createEngine(settings, eventBus);
-    const renderer = createRenderer(canvas, settings);
+    const renderer = createRenderer(canvas, settings.colors, settings.canvas);
     const audioManager = createAudioManager(settings.audio);
     const keydownHandler = createKeydownHandler(eventBus);
-    const layoutManager = createLayoutManager({
-        settings: settings,
-        eventBus,
-    });
+    const layoutManager = createLayoutManager({ settings, eventBus });
 
     const loop = createLoop(() => {
         const snapshot = engine.tick();
@@ -37,39 +37,22 @@ export function createGame(canvas) {
 
     function initialize() {
         const username = localStorage.getItem("username");
-
-        if (username) {
-            return start(username);
-        }
+        if (username) return start(username);
 
         layoutManager.showUsernameModal().then(start);
     }
 
-    /**
-     * Starts the game loop and activates key listening.
-     * Used for initial start or resuming after a global stop/restart.
-     */
     function start(username) {
         loop.start();
         keydownHandler.start();
-        if (username) {
-            layoutManager.setUsername(username);
-        }
+        if (username) layoutManager.setUsername(username);
     }
 
-    /**
-     * Completely stops the loop and deactivates key listening.
-     * Used for Game Over or preparing for a clean restart.
-     */
     function stop() {
         loop.stop();
         keydownHandler.stop();
     }
 
-    /**
-     * Stops the game loop, resets the engine state, and restarts the game.
-     * Used for starting a new game after a Game Over or a user-initiated restart.
-     */
     function restart() {
         stop();
         engine.setDefault();
@@ -96,36 +79,13 @@ export function createGame(canvas) {
         engine.setDirection(dir.x, dir.y);
     }
 
-    function handleReset() {
-        layoutManager.resetAll();
-    }
-
-    function handleSettingsSave(newSettings) {
-        settingsManager.saveSettings(newSettings);
-        restart();
-    }
-
-    function handleSettingsReset() {
-        settingsManager.restoreSettings();
-        restart();
-    }
-
-    function handleModalOpen({ type }) {
-        if (type !== "settings") return;
-        engine.togglePause({ emitEvent: false });
-    }
-
-    function handleRestartRequested() {
-        restart();
+    function handleMovePause({ emitEvent }) {
+        engine.togglePause({ emitEvent });
     }
 
     function handleStatePause(isPaused) {
         layoutManager.togglePauseModal(isPaused);
         isPaused ? loop.stop() : loop.start();
-    }
-
-    function handleMovePause({ emitEvent }) {
-        engine.togglePause({ emitEvent });
     }
 
     function handleScore(score) {
@@ -149,6 +109,29 @@ export function createGame(canvas) {
         stop();
         layoutManager.showGameOverModal(snapshot);
         audioManager.play("gameover");
+    }
+
+    function handleReset() {
+        layoutManager.resetAll();
+    }
+
+    function handleSettingsSave(newSettings) {
+        settingsManager.saveSettings(newSettings);
+        restart();
+    }
+
+    function handleSettingsReset() {
+        settingsManager.restoreSettings();
+        restart();
+    }
+
+    function handleModalOpen({ type }) {
+        if (type !== "settings") return;
+        engine.togglePause({ emitEvent: false });
+    }
+
+    function handleRestartRequested() {
+        restart();
     }
 
     return {

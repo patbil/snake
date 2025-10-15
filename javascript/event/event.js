@@ -1,9 +1,10 @@
+/** @typedef {import('../types/event').EventBusPublicAPI} EventBusPublicAPI */
 
 /**
  * Creates and returns a strongly-typed Event Bus object.
  * Only allows subscribing and emitting events defined in GameEvents.
  *
- * @returns {import('../types/event').EventBusPublicAPI}
+ * @returns {EventBusPublicAPI}
  */
 export function createEventBus() {
     const subscribers = new Map();

@@ -1,7 +1,10 @@
+/** @typedef {import('../types/events').GameEvents} GameEvents */
+
 /**
  * Centralized event constants for the Snake Game.
  * Using this ensures consistent event names across the application.
- * @type {import('../types/events').GameEvents}
+ *
+ * @type {GameEvents}
  */
 export const EVENTS = {
     MOVE: {

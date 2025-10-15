@@ -1,11 +1,14 @@
 import { EVENTS } from "../event/events.js";
 
+/** @typedef {import('../types/event').EventBusPublicAPI} EventBus */
+/** @typedef {import('../types/handler').HandlerPublicAPI} HandlerPublicAPI */
+
 /**
  * Creates the Keydown Handler module.
- * This module listens for global key presses and maps them directly to
- * input commands emitted onto the Event Bus.
- * @param {object} eventBus - The Event Bus interface (must expose the emit method) used to broadcast user input commands.
- * @returns {object} Public interface to start and stop the input listener.
+ * Listens for global key presses and maps them to input commands emitted onto the Event Bus.
+ *
+ * @param {EventBus} eventBus - Event Bus used to broadcast user input commands.
+ * @returns {HandlerPublicAPI}
  */
 export function createKeydownHandler(eventBus) {
     const directionMap = {
@@ -22,9 +25,7 @@ export function createKeydownHandler(eventBus) {
     const handler = (event) => {
         const key = event.key;
 
-        if (directionMap[key] || key === " ") {
-            event.preventDefault();
-        }
+        if (directionMap[key] || key === " ") event.preventDefault();
 
         if (key === " ") {
             eventBus.emit(EVENTS.MOVE.TOGGLE_PAUSE, { emitEvent: true });
@@ -38,16 +39,10 @@ export function createKeydownHandler(eventBus) {
         }
     };
 
-    /**
-     * Starts listening for global keydown events.
-     */
     function start() {
         window.addEventListener("keydown", handler);
     }
 
-    /**
-     * Stops listening for global keydown events.
-     */
     function stop() {
         window.removeEventListener("keydown", handler);
     }

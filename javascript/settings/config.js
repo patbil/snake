@@ -1,7 +1,9 @@
+/** @typedef {import('../types/config').GameConfig} GameConfig */
+
 /**
  * Global configuration settings for the Snake Game Engine.
  * This object centralizes all core constants, canvas dimensions, speed modifiers, and colors.
- * @type {import('../types/config').GameConfig}
+ * @type {GameConfig}
  */
 export const config = Object.freeze({
     initialSegmentCount: 5,

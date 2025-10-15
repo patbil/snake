@@ -1,15 +1,19 @@
+/** @typedef {import('../types/config').ColorConfig} ColorConfig */
+/** @typedef {import('../types/config').CanvasConfig} CanvasConfig */
+/** @typedef {import('../types/renderer').RendererPublicAPI} RendererPublicAPI */
+
 /**
  * Creates the Renderer module, responsible for drawing the game state onto a Canvas element.
  *
- * @param {HTMLCanvasElement} canvas - The Canvas element where the game will be drawn.
- * @param {object} settings - The settingsuration object (contains colors).
- * @returns {object} The public renderer interface with the 'render' function.
+ * @param {HTMLCanvasElement} canvasElement - The canvas element where the game will be drawn.
+ * @param {ColorConfig} colors - Colors configuration for snake, apple, and background.
+ * @param {CanvasConfig} canvas - Canvas configuration (size and grid count).
+ * @returns {RendererPublicAPI} The public renderer interface.
  */
-export function createRenderer(canvasElement, settings) {
+export function createRenderer(canvasElement, colors, canvas) {
     const ctx = canvasElement.getContext("2d");
 
     const GRID_GAP = 2;
-    const { colors, canvas } = settings;
     const blockSize = Math.ceil(canvas.size / canvas.grid);
     canvasElement.height = canvas.size;
     canvasElement.width = canvas.size;
@@ -31,12 +35,6 @@ export function createRenderer(canvasElement, settings) {
         );
     }
 
-    /**
-     * Rendering function. Clears the canvas and draws the entire game state.
-     *
-     * @param {object} snapshot - The current game state snapshot (segments, apple).
-     * @param {number} gridCount - The pixel size of one unit in the game grid.
-     */
     function render(snapshot) {
         clear();
 
