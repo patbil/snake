@@ -6,7 +6,7 @@ import { createStateManager } from "./state.js";
  * and managing interactions between the game state and logic.
  *
  * @param {object} settings - The global game settingsuration object.
- * @param {number} settings.gridSize - The size of the game grid.
+ * @param {number} settings.gridCount - The count of the game grid.
  * @param {number} settings.initialSegmentCount - The starting length of the snake.
  * @param {number} settings.levelStep - Score threshold to increase level.
  * @param {object} eventBus - The central Event Bus used by the engine to emit state change notifications.
@@ -14,7 +14,7 @@ import { createStateManager } from "./state.js";
  */
 export function createEngine(settings, eventBus) {
     const stateManager = createStateManager(settings, eventBus);
-    const gridSize = settings.gridSize;
+    const gridCount = settings.gridCount;
     let initialized = false;
 
     /**
@@ -76,8 +76,8 @@ export function createEngine(settings, eventBus) {
      * @returns {object} Updated game state after movement.
      */
     function handleMovement({ segments, direction }) {
-        const newX = (segments[0].x + direction.x + gridSize) % gridSize;
-        const newY = (segments[0].y + direction.y + gridSize) % gridSize;
+        const newX = (segments[0].x + direction.x + gridCount) % gridCount;
+        const newY = (segments[0].y + direction.y + gridCount) % gridCount;
 
         stateManager.addHead(newX, newY);
         let newState = stateManager.snapshot();
@@ -100,8 +100,8 @@ export function createEngine(settings, eventBus) {
      */
     function handleConsumption() {
         stateManager.setApple(
-            Math.floor(Math.random() * gridSize),
-            Math.floor(Math.random() * gridSize)
+            Math.floor(Math.random() * gridCount),
+            Math.floor(Math.random() * gridCount)
         );
 
         stateManager.increaseScore();

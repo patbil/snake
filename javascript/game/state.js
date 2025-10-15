@@ -4,7 +4,7 @@ import { EVENTS } from "../event/events.js";
  * State Manager Factory for the Snake game.
  * Encapsulates all game state, manages mutations, and utilizes the Event Emitter pattern.
  *
- * @param {object} settings - Game settingsuration object (e.g., gridSize, initialSegmentCount).
+ * @param {object} settings - Game settingsuration object (e.g., gridCount, initialSegmentCount).
  * @returns {object} The public State Manager interface.
  */
 export function createStateManager(settings, eventBus) {
@@ -38,7 +38,7 @@ export function createStateManager(settings, eventBus) {
         state.score = 0;
         state.pause = false;
 
-        const startPos = Math.floor(settings.gridSize / 2);
+        const startPos = Math.floor(settings.gridCount / 2);
         state.segments = Array.from(
             { length: settings.initialSegmentCount },
             (_, i) => ({

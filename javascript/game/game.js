@@ -30,7 +30,7 @@ export function createGame(canvas) {
 
     const loop = createLoop(() => {
         const snapshot = engine.tick();
-        renderer.render(snapshot, settings.gridSize);
+        renderer.render(snapshot);
     }, settings.initialSpeed);
 
     registerEvents();

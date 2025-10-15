@@ -3,8 +3,10 @@
  * This object centralizes all core constants, dimensions, speed modifiers, and colors.
  */
 export const config = Object.freeze({
+    canvasSize: 725,
+
     /** The number of units (blocks) along one edge of the square grid (e.g., 25x25). */
-    gridSize: 25,
+    gridCount: 29,
     /** The initial number of segments the snake starts with. */
     initialSegmentCount: 5,
     /** The initial speed/interval of the game loop in milliseconds. */
