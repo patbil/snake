@@ -4,12 +4,6 @@
  */
 
 /**
- * @typedef {Object} StateConfig
- *  @prop {number} gridCount - Number of cells in each dimension of the grid.
- *  @prop {number} initialSegmentCount - Initial length of the snake.
- */
-
-/**
  * @typedef {Object} StateSnapshot
  * @property {boolean} pause - Whether the game is currently paused.
  * @property {number} score - Current score of the player.

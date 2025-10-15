@@ -2,11 +2,6 @@
 /** @typedef {import('./config').GameConfig} GameConfig */
 /** @typedef {import('./event').EventBusPublicAPI} EventBusPublicAPI */
 
-/**
- * @typedef {Object} LayoutDependencies
- * @property {GameConfig} settings - The initial or current game settings object.
- * @property {EventBusPublicAPI} eventBus - Event Bus instance for module communication.
- */
 
 /**
  * @typedef {Object} LayoutManagerPublicAPI

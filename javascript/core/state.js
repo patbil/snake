@@ -1,6 +1,6 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import('../types/state').StateConfig} StateConfig */
+/** @typedef {import('../types/config').GameConfig} GameConfig */
 /** @typedef {import('../types/event').EventBusPublicAPI} EventBusPublicAPI */
 /** @typedef {import('../types/state').GameStatePublicAPI} GameStatePublicAPI */
 
@@ -9,13 +9,10 @@ import { EVENTS } from "../events/events.js";
  * Encapsulates all game state, manages mutations, and emits events via EventBus.
  *
  * @param {EventBusPublicAPI} eventBus - Event Bus for emitting state changes
- * @param {StateConfig} config - State configuration.
+ * @param {GameConfig} settings - Game settings configuration.
  * @returns {GameStatePublicAPI}
  */
-export function createStateManager(
-    eventBus,
-    { gridCount, initialSegmentCount }
-) {
+export function createStateManager(eventBus, settings) {
     const state = {
         pause: false,
         score: 0,
@@ -42,9 +39,9 @@ export function createStateManager(
         state.score = 0;
         state.pause = false;
 
-        const startPos = Math.floor(gridCount / 2);
+        const startPos = Math.floor(settings.canvas.grid / 2);
         state.segments = Array.from(
-            { length: initialSegmentCount },
+            { length: settings.initialSegmentCount },
             (_, i) => ({
                 x: startPos - i,
                 y: startPos,

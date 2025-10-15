@@ -1,16 +1,18 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import('../types/layout').LayoutDependencies} LayoutDependencies */
+/** @typedef {import('../types/config').GameConfig} GameConfig */
+/** @typedef {import('../types/event').EventBusPublicAPI} EventBusPublicAPI */
 /** @typedef {import('../types/layout').LayoutManagerPublicAPI} LayoutManagerPublicAPI */
 
 /**
  * Creates the Layout Manager module.
  * Responsible for direct DOM manipulation and managing UI state.
  *
- * @param {LayoutDependencies} dependencies - Dependencies required to initialize the layout manager.
+ * @param {GameConfig} settings - The initial or current game settings object.
+ * @param {EventBusPublicAPI} eventBus - Event Bus instance for module communication.
  * @returns {LayoutManagerPublicAPI} The public interface for interacting with the game layout.
  */
-export function createLayoutManager({ settings, eventBus }) {
+export function createLayoutManager(eventBus, settings) {
     const elements = getElements();
 
     function getElements() {
@@ -55,6 +57,9 @@ export function createLayoutManager({ settings, eventBus }) {
                 else if (input.type === "number") value = parseInt(input.value);
                 else value = input.value;
 
+                console.log(value);
+
+                if (value === undefined || value === null) return;
                 settingsToSave[path] = value;
             });
 

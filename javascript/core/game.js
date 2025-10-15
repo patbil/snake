@@ -24,16 +24,11 @@ export function createGame(canvas) {
     const settingsManager = createSettingsManager();
     const settings = settingsManager.getSettings();
 
+    const engine = createEngine(eventBus, settings);
     const keydownHandler = createKeydownHandler(eventBus);
     const audioManager = createAudioManager(settings.audio);
-    const layoutManager = createLayoutManager({ settingsManager, eventBus });
+    const layoutManager = createLayoutManager(eventBus, settings);
     const renderer = createRenderer(canvas, settings.colors, settings.canvas);
-
-    const engine = createEngine(eventBus, {
-        gridCount: settings.canvas.grid,
-        initialSegmentCount: settings.initialSegmentCount,
-        levelStep: settings.levelStep,
-    });
 
     const loop = createLoop(() => {
         const snapshot = engine.tick();
@@ -75,8 +70,6 @@ export function createGame(canvas) {
     function restart() {
         stop();
         engine.setDefault();
-        
-        // Update settings-dependent components with current values
         const currentSettings = settingsManager.getSettings();
         loop.setSpeed(currentSettings.initialSpeed);
         

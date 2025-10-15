@@ -1,6 +1,6 @@
 import { createStateManager } from "./state.js";
 
-/** @typedef {import('../types/engine').EngineConfig} EngineConfig */
+/** @typedef {import('../types/config').GameConfig} GameConfig */
 /** @typedef {import('../types/events').EventBusPublicAPI} EventBus */
 /** @typedef {import('../types/engine').EnginePublicAPI} EnginePublicAPI */
 
@@ -8,18 +8,13 @@ import { createStateManager } from "./state.js";
  * Creates the Game Engine module.
  * Controls the game loop, state updates, and interactions with the Event Bus.
  *
+ * @param {GameConfig} settings - Game configuration object.
  * @param {EventBus} eventBus - Central Event Bus for emitting state change events.
- * @param {EngineConfig} config - Engine configuration object.
  * @returns {EnginePublicAPI}
  */
-export function createEngine(
-    eventBus,
-    { gridCount, initialSegmentCount, levelStep }
-) {
-    const stateManager = createStateManager(eventBus, {
-        gridCount,
-        initialSegmentCount,
-    });
+export function createEngine(eventBus, settings) {
+    const stateManager = createStateManager(eventBus, settings);
+    const gridCount = settings.canvas.grid;
     let initialized = false;
 
     function initialize() {
@@ -58,7 +53,7 @@ export function createEngine(
 
         while (
             newState.segments.length >
-            initialSegmentCount + newState.score
+            settings.initialSegmentCount + newState.score
         ) {
             stateManager.removeTail();
             newState = stateManager.snapshot();
@@ -88,7 +83,6 @@ export function createEngine(
         if (!initialized) initialize();
 
         let state = stateManager.snapshot();
-
         if (state.direction.x !== 0 || state.direction.y !== 0) {
             state = handleMovement(state);
         }
