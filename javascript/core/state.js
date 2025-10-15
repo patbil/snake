@@ -1,13 +1,18 @@
-import { EVENT_DOMAINS } from "./events-definition.js";
+import { EVENTS } from "../events/events.js";
+
+/** @typedef {import('../@types/config.js').GameConfig} GameConfig */
+/** @typedef {import('../@types/event.js').EventBusPublicAPI} EventBusPublicAPI */
+/** @typedef {import('../@types/state.js').GameStatePublicAPI} GameStatePublicAPI */
 
 /**
  * State Manager Factory for the Snake game.
- * Encapsulates all game state, manages mutations, and utilizes the Event Emitter pattern.
+ * Encapsulates all game state, manages mutations, and emits events via EventBus.
  *
- * @param {object} settings - Game settingsuration object (e.g., gridSize, initialSegmentCount).
- * @returns {object} The public State Manager interface.
+ * @param {EventBusPublicAPI} eventBus - Event Bus for emitting state changes
+ * @param {GameConfig} settings - Game settings configuration.
+ * @returns {GameStatePublicAPI}
  */
-export function createStateManager(settings, eventBus) {
+export function createStateManager(eventBus, settings) {
     const state = {
         pause: false,
         score: 0,
@@ -18,10 +23,6 @@ export function createStateManager(settings, eventBus) {
         apple: { x: null, y: null },
     };
 
-    /**
-     * Returns a safe, shallow copy of the current game state .
-     * This protects the internal 'state' object from external mutation.
-     */
     function snapshot() {
         return {
             pause: state.pause,
@@ -38,7 +39,7 @@ export function createStateManager(settings, eventBus) {
         state.score = 0;
         state.pause = false;
 
-        const startPos = Math.floor(settings.gridSize / 2);
+        const startPos = Math.floor(settings.canvas.grid / 2);
         state.segments = Array.from(
             { length: settings.initialSegmentCount },
             (_, i) => ({
@@ -51,17 +52,17 @@ export function createStateManager(settings, eventBus) {
         state.prevDirection = { x: 0, y: 0 };
         state.apple = { x: startPos + 5, y: startPos + 5 };
 
-        eventBus.emit(EVENT_DOMAINS.STATE.RESET, snapshot());
+        eventBus.emit(EVENTS.STATE.RESET, snapshot());
     }
 
     function addHead(x, y) {
         state.segments.unshift({ x, y });
-        eventBus.emit(EVENT_DOMAINS.STATE.SEGMENTS, snapshot());
+        eventBus.emit(EVENTS.STATE.SEGMENTS, snapshot());
     }
 
     function removeTail() {
         state.segments.pop();
-        eventBus.emit(EVENT_DOMAINS.STATE.SEGMENTS, snapshot());
+        eventBus.emit(EVENTS.STATE.SEGMENTS, snapshot());
     }
 
     function setDirection(x, y) {
@@ -79,7 +80,7 @@ export function createStateManager(settings, eventBus) {
         }
 
         state.direction = { x, y };
-        eventBus.emit(EVENT_DOMAINS.STATE.DIRECTION, { x, y });
+        eventBus.emit(EVENTS.STATE.DIRECTION, { x, y });
     }
 
     function togglePause({ emitEvent }) {
@@ -93,29 +94,29 @@ export function createStateManager(settings, eventBus) {
         }
 
         if (emitEvent) {
-            eventBus.emit(EVENT_DOMAINS.STATE.PAUSE, state.pause);
+            eventBus.emit(EVENTS.STATE.PAUSE, state.pause);
         }
     }
 
     function setApple(x, y) {
         state.apple = { x, y };
-        eventBus.emit(EVENT_DOMAINS.STATE.APPLE, { x, y });
+        eventBus.emit(EVENTS.STATE.APPLE, { x, y });
     }
 
     function increaseScore() {
         state.score += 1;
-        eventBus.emit(EVENT_DOMAINS.STATE.SCORE, state.score);
+        eventBus.emit(EVENTS.STATE.SCORE, state.score);
     }
 
     function increaseLevel() {
         state.level += 1;
-        eventBus.emit(EVENT_DOMAINS.STATE.LEVEL_UP, state.level);
+        eventBus.emit(EVENTS.STATE.LEVEL_UP, state.level);
     }
 
     function gameOver() {
         state.pause = true;
         state.direction = { x: 0, y: 0 };
-        eventBus.emit(EVENT_DOMAINS.STATE.GAME_OVER, snapshot());
+        eventBus.emit(EVENTS.STATE.GAME_OVER, snapshot());
     }
 
     return {

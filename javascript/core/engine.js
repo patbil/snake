@@ -1,17 +1,20 @@
 import { createStateManager } from "./state.js";
 
+/** @typedef {import('../@types/config.js').GameConfig} GameConfig */
+/** @typedef {import('../@types/events.js').EventBusPublicAPI} EventBus */
+/** @typedef {import('../@types/engine.js').EnginePublicAPI} EnginePublicAPI */
+
 /**
  * Creates the Game Engine module.
- * This function acts as a controller, orchestrating the game loop ('tick')
- * and managing interactions between the game state and logic.
+ * Controls the game loop, state updates, and interactions with the Event Bus.
  *
- * @param {object} settings - The global game settingsuration object.
- * @param {object} eventBus - The central Event Bus used by the engine to emit state change notifications.
- * @returns {object} The public engine interface.
+ * @param {GameConfig} settings - Game configuration object.
+ * @param {EventBus} eventBus - Central Event Bus for emitting state change events.
+ * @returns {EnginePublicAPI}
  */
-export function createEngine(settings, eventBus) {
-    const stateManager = createStateManager(settings, eventBus);
-    const gridSize = settings.gridSize;
+export function createEngine(eventBus, settings) {
+    const stateManager = createStateManager(eventBus, settings);
+    const gridCount = settings.canvas.grid;
     let initialized = false;
 
     function initialize() {
@@ -35,24 +38,15 @@ export function createEngine(settings, eventBus) {
         stateManager.setDirection(dx, dy);
     }
 
-    /**
-     * Helper to handle collision events (e.g., hitting the body or wall).
-     * @returns {object} The state after Game Over reset.
-     */
-    function handleColision() {
-        stateManager.gameOver(); // Resets score, level, segments to default
+    function handleCollision() {
+        stateManager.gameOver();
         const newState = stateManager.snapshot();
         return newState;
     }
 
-    /**
-     * Helper to handle snake movement, grid wrapping, and length management.
-     * @param {object} state - Snapshot of the state before movement.
-     * @returns {object} The new state after movement and tail removal.
-     */
     function handleMovement({ segments, direction }) {
-        const newX = (segments[0].x + direction.x + gridSize) % gridSize;
-        const newY = (segments[0].y + direction.y + gridSize) % gridSize;
+        const newX = (segments[0].x + direction.x + gridCount) % gridCount;
+        const newY = (segments[0].y + direction.y + gridCount) % gridCount;
 
         stateManager.addHead(newX, newY);
         let newState = stateManager.snapshot();
@@ -68,14 +62,10 @@ export function createEngine(settings, eventBus) {
         return newState;
     }
 
-    /**
-     * Helper to handle apple consumption, scoring, and level progression.
-     * @returns {object} The new state after consumption and score updates.
-     */
     function handleConsumption() {
         stateManager.setApple(
-            Math.floor(Math.random() * gridSize),
-            Math.floor(Math.random() * gridSize)
+            Math.floor(Math.random() * gridCount),
+            Math.floor(Math.random() * gridCount)
         );
 
         stateManager.increaseScore();
@@ -89,27 +79,22 @@ export function createEngine(settings, eventBus) {
         return newState;
     }
 
-    /**
-     * The core game loop tick function. Executes one step of the game logic.
-     * @returns {object} The essential state data for the renderer.
-     */
     function tick() {
         if (!initialized) initialize();
 
         let state = stateManager.snapshot();
-
         if (state.direction.x !== 0 || state.direction.y !== 0) {
             state = handleMovement(state);
         }
 
         const [head, ...body] = state.segments;
-        const colision = body.some(
+        const collision = body.some(
             (segment) => segment.x === head.x && segment.y === head.y
         );
         const consumption =
             head.x === state.apple.x && head.y === state.apple.y;
 
-        if (colision) state = handleColision(state);
+        if (collision) state = handleCollision();
         if (consumption) state = handleConsumption();
 
         return {

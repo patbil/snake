@@ -49,7 +49,7 @@
                         <input
                             type="number"
                             id="setting-startspeed"
-                            data-config="initialSpeed"
+                            data-config="speed"
                             min="50"
                             max="300"
                         />
@@ -76,7 +76,7 @@
                         <input
                             type="checkbox"
                             id="setting-sound"
-                            data-config="sound.enabled"
+                            data-config="audio.enabled"
                         />
                     </div>
                     <div class="setting-control control-row">
@@ -113,7 +113,7 @@
 
                     <input
                         type="text"
-                        id="userNameInput"
+                        id="usernameInput"
                         placeholder="Enter your name..."
                         maxlength="20"
                         required
@@ -135,7 +135,7 @@
                 </div>
 
                 <div
-                    id="gameoverElements"
+                    id="gameOverElements"
                     class="modal-state-group hidden"
                 >
                     <p>The rules defeated you!</p>
@@ -170,8 +170,6 @@
                 <div class="game-container">
                     <canvas
                         id="canvas"
-                        width="725"
-                        height="725"
                         aria-label="Game board"
                     ></canvas>
                 </div>
@@ -189,11 +187,7 @@
             <div class="leaderboard">
                 <h2>🏆 Ranking</h2>
                 <ul>
-                    <li><strong>User 1</strong> <span>1234</span></li>
-                    <li><strong>User 2</strong> <span>1010</span></li>
-                    <li><strong>User 3</strong> <span>880</span></li>
-                    <li><strong>User 4</strong> <span>765</span></li>
-                    <li><strong>User 5</strong> <span>500</span></li>
+                    <li class="loading">Loading scores...</li>
                 </ul>
             </div>
         </div>

@@ -1,10 +1,12 @@
+/** @typedef {import('../@types/loop').LoopPublicAPI} LoopPublicAPI */
+
 /**
  * Creates the Game Loop module, wrapping setInterval functionality.
- * It provides control over starting, stopping, and changing the loop's speed.
+ * Provides control over starting, stopping, and changing the loop's speed.
  *
- * @param {function} callback - The function (e.g., the 'tick' function) to be executed cyclically.
- * @param {number} speed - The initial interval (in milliseconds) between 'callback' calls.
- * @returns {object} The public interface for controlling the loop.
+ * @param {() => void} callback - The function to execute cyclically.
+ * @param {number} speed - The initial interval (ms) between 'callback' executions.
+ * @returns {LoopPublicAPI}
  */
 export function createLoop(callback, speed) {
     let intervalId = undefined;
@@ -23,11 +25,8 @@ export function createLoop(callback, speed) {
 
     function setSpeed(newSpeed) {
         currentSpeed = newSpeed;
-
-        if (intervalId) {
-            stop();
-            start();
-        }
+        stop();
+        start();
     }
 
     function snapshot() {
@@ -37,10 +36,5 @@ export function createLoop(callback, speed) {
         };
     }
 
-    return {
-        start,
-        stop,
-        setSpeed,
-        snapshot,
-    };
+    return { start, stop, setSpeed, snapshot };
 }

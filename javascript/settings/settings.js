@@ -1,30 +1,30 @@
 import { config } from "./config.js";
 
+/** @typedef {import('../@types/settings.js').SettingsManagerPublicAPI} SettingsManagerPublicAPI */
+
 /**
  * Creates the Settings Manager module.
- * It manages loading, storing, and accessing the game configuration, persisting configurable options to the browser's localStorage.
- * @returns {object} The public interface for managing settings.
+ * Manages loading, storing, and accessing the game configuration,
+ * persisting configurable options to the browser's localStorage.
+ *
+ * @returns {SettingsManagerPublicAPI} The public interface for managing settings.
  */
 export function createSettingsManager() {
     const settings = structuredClone(config);
     const settingsKey = "snakeGameSettings";
     const configurableKeys = [
         "initialSegmentCount",
-        "initialSpeed",
+        "speed",
         "maxSpeed",
         "levelStep",
         "speedStep",
-        "sound.enabled",
-        "sound.volume",
+        "audio.enabled",
+        "audio.volume",
         "colors.snake",
         "colors.apple",
         "colors.background",
     ];
 
-    /**
-     * Returns the currently active settings object.
-     * @returns {object} The current settings, merged with defaults.
-     */
     function getSettings() {
         return settings;
     }
@@ -40,21 +40,6 @@ export function createSettingsManager() {
         localStorage.removeItem(settingsKey);
     }
 
-    function loadSettings() {
-        const stored = localStorage.getItem(settingsKey);
-        if (stored) {
-            const loadedSettings = JSON.parse(stored);
-            configurableKeys.forEach((key) => {
-                const value = loadedSettings[key];
-                if (value !== undefined) setNestedValue(settings, key, value);
-            });
-        }
-    }
-
-    /**
-     * Saves the subset of settings to localStorage.
-     * @param {object} newSettings - An object containing the new setting values.
-     */
     function saveSettings(newSettings) {
         const settingsToSave = {};
         configurableKeys.forEach((key) => {
@@ -65,6 +50,17 @@ export function createSettingsManager() {
         });
 
         localStorage.setItem(settingsKey, JSON.stringify(settingsToSave));
+    }
+
+    function loadSettings() {
+        const stored = localStorage.getItem(settingsKey);
+        if (stored) {
+            const loadedSettings = JSON.parse(stored);
+            configurableKeys.forEach((key) => {
+                const value = loadedSettings[key];
+                if (value !== undefined) setNestedValue(settings, key, value);
+            });
+        }
     }
 
     function setNestedValue(obj, path, value) {
@@ -86,7 +82,6 @@ export function createSettingsManager() {
 
     return {
         getSettings,
-        loadSettings,
         saveSettings,
         restoreSettings,
         defaultConfig: structuredClone(config),
