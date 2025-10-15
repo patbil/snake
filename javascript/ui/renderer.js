@@ -5,18 +5,18 @@
  * @param {object} settings - The settingsuration object (contains colors).
  * @returns {object} The public renderer interface with the 'render' function.
  */
-export function createRenderer(canvas, settings) {
-    const ctx = canvas.getContext("2d");
+export function createRenderer(canvasElement, settings) {
+    const ctx = canvasElement.getContext("2d");
 
     const GRID_GAP = 2;
-    const { colors, gridCount, canvasSize } = settings;
-    const blockSize = canvasSize / gridCount;
-    canvas.height = canvasSize;
-    canvas.width = canvasSize;
+    const { colors, canvas } = settings;
+    const blockSize = Math.ceil(canvas.size / canvas.grid);
+    canvasElement.height = canvas.size;
+    canvasElement.width = canvas.size;
 
     function clear() {
         ctx.fillStyle = colors.background;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, canvas.size, canvas.size);
     }
 
     function drawElement(x, y) {

@@ -21,7 +21,7 @@ export function createGame(canvas) {
 
     const engine = createEngine(settings, eventBus);
     const renderer = createRenderer(canvas, settings);
-    const audioManager = createAudioManager(settings);
+    const audioManager = createAudioManager(settings.audio);
     const keydownHandler = createKeydownHandler(eventBus);
     const layoutManager = createLayoutManager({
         settings: settings,

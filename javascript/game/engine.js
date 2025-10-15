@@ -6,7 +6,7 @@ import { createStateManager } from "./state.js";
  * and managing interactions between the game state and logic.
  *
  * @param {object} settings - The global game settingsuration object.
- * @param {number} settings.gridCount - The count of the game grid.
+ * @param {number} settings.canvas.grid - The count of the game grid.
  * @param {number} settings.initialSegmentCount - The starting length of the snake.
  * @param {number} settings.levelStep - Score threshold to increase level.
  * @param {object} eventBus - The central Event Bus used by the engine to emit state change notifications.
@@ -14,7 +14,7 @@ import { createStateManager } from "./state.js";
  */
 export function createEngine(settings, eventBus) {
     const stateManager = createStateManager(settings, eventBus);
-    const gridCount = settings.gridCount;
+    const gridCount = settings.canvas.grid;
     let initialized = false;
 
     /**

@@ -1,63 +1,45 @@
 /**
- * @typedef {import('./config').SoundConfig} SoundConfig - Importuje typ konfiguracji dźwięku.
- */
-
-/**
- * @typedef {object} AudioManagerPublicAPI
- * @property {function(keyof Omit<SoundConfig, 'enabled' | 'volume'>): void} play - Plays a specific sound effect.
- */
-
-/**
- * Creates the Audio Controller module.
- * This controller manages sound effects, handling loading, caching, and playback.
+ * Creates the Audio Manager module.
+ * Handles sound effects: loading, caching, and playback.
  *
- * @param {object} settings - Configuration object (expected to be the global config object).
- * @param {SoundConfig} settings.sound - The sound configuration subset.
- * @returns {AudioManagerPublicAPI} The public interface for controlling sound playback.
+ * @param {import('../types/config').AudioConfig} audioSettings - Sound configuration (volume, enabled, sound paths).
+ * @returns {import('../types/audio').AudioManagerPublicAPI} Public interface for controlling audio playback.
  */
-export function createAudioManager(settings) {
+export function createAudioManager(audioSettings) {
     const audioCache = {};
 
-    // settings.sound.volume jest teraz bezpiecznie typowane jako number
-    const volume = settings.sound.volume;
-
     /**
-     * Internal function to load and cache the Audio object.
-     * @param {string} path - The file path to the audio resource.
-     * @returns {HTMLAudioElement} The cached or newly created Audio object.
+     * Loads and caches an Audio object.
+     * @param {string} path - Path to the audio file.
+     * @returns {HTMLAudioElement} The cached or newly created Audio element.
      */
     function loadAudio(path) {
         if (audioCache[path]) return audioCache[path];
+
         const audio = new Audio(path);
-        audio.volume = volume;
+        audio.volume = audioSettings.volume;
         audioCache[path] = audio;
         return audio;
     }
 
     /**
-     * Plays a specific sound effect identified by its key in the settings.
-     *
-     * @param {keyof Omit<SoundConfig, 'enabled' | 'volume'>} soundName - The key (name) of the sound defined in the settings object (e.g., "eat", "gameover", "levelup").
-     * @returns {void}
+     * Plays a specific sound effect by key.
+     * @param {keyof Omit<import('../types/config').AudioConfig, 'enabled' | 'volume'>} soundName - The sound key (e.g., "eat", "gameover", "levelup").
      */
     function play(soundName) {
-        if (!settings.sound.enabled) return;
+        if (!audioSettings.enabled) return;
 
-        const path = settings.sound[soundName]; // Edytor wie, że soundName to klucz SoundConfig
-        if (!path) {
-            return;
-        }
+        const path = audioSettings[soundName];
+        if (!path) return;
 
         const audio = loadAudio(path);
-        audio.currentTime = 0; // Rewind to start
-        audio
-            .play()
-            .catch((e) =>
-                console.error(`Audio playback failed for '${soundName}':`, e)
-            );
+        audio.currentTime = 0;
+        audio.play().catch((e) => {
+            if (e.name !== "NotAllowedError") {
+                console.error(`Audio playback failed for '${soundName}':`, e);
+            }
+        });
     }
 
-    return {
-        play,
-    };
+    return { play };
 }
