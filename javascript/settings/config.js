@@ -7,7 +7,7 @@
  */
 export const config = Object.freeze({
     initialSegmentCount: 5,
-    initialSpeed: 100,
+    speed: 100,
     maxSpeed: 30,
     levelStep: 5,
     speedStep: 5,

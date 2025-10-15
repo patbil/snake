@@ -33,7 +33,7 @@ export function createGame(canvas) {
     const loop = createLoop(() => {
         const snapshot = engine.tick();
         renderer.render(snapshot);
-    }, settings.initialSpeed);
+    }, settings.speed);
 
     const gameBus = createGameBus({
         eventBus,
@@ -70,9 +70,7 @@ export function createGame(canvas) {
     function restart() {
         stop();
         engine.setDefault();
-        const currentSettings = settingsManager.getSettings();
-        loop.setSpeed(currentSettings.initialSpeed);
-        
+        loop.setSpeed(settings.speed);
         start();
     }
 

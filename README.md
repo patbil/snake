@@ -4,11 +4,11 @@ A modern implementation of the classic Snake game (originally released in 1976),
 
 ## Features
 
-- **Classic Snake gameplay** with modern UI/UX
-- **Customizable settings** — adjust speed, colors, and audio
-- **Sound effects** — immersive audio feedback
-- **Responsive design** — works on different screen sizes
-- **Score tracking** with level progression
+- Classic Snake gameplay with modern UI/UX
+- Customizable settings — adjust speed, colors, and audio
+- Sound effects — immersive audio feedback
+- Responsive design — works on different screen sizes
+- Score tracking with level progression
 
 ---
 
@@ -69,9 +69,9 @@ snake/
     ├── audio/                      
     │   └── audio.js                # Audio manager
     └── @types/                     # JSDoc type definitions
-        ├── game.js
-        ├── game-bus.js
-        ├── engine.js
+        ├── game.js                 # Main game types
+        ├── game-bus.js             # Game bus coordinator types
+        ├── engine.js               # Game engine types
         └── ...
 ```
 

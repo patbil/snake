@@ -25,10 +25,6 @@ export function createLoop(callback, speed) {
 
     function setSpeed(newSpeed) {
         currentSpeed = newSpeed;
-        if (intervalId) {
-            stop();
-            start();
-        }
     }
 
     function snapshot() {

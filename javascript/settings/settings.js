@@ -14,7 +14,7 @@ export function createSettingsManager() {
     const settingsKey = "snakeGameSettings";
     const configurableKeys = [
         "initialSegmentCount",
-        "initialSpeed",
+        "speed",
         "maxSpeed",
         "levelStep",
         "speedStep",
