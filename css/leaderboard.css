@@ -1,7 +1,7 @@
 .leaderboard {
     display: flex;
     flex-direction: column;
-    min-height: 0;
+    min-height: 500px;
 }
 
 .leaderboard h2 {
