@@ -34,7 +34,7 @@ export function createLayoutManager(eventBus, settings) {
             restartButton: document.getElementById("restartButton"),
             finalLevel: document.getElementById("finalLevel"),
             finalScore: document.getElementById("finalScore"),
-            leaderboardElement: document.querySelector('.leaderboard ul'),
+            leaderboardElement: document.querySelector(".leaderboard ul"),
         };
     }
 
@@ -42,73 +42,56 @@ export function createLayoutManager(eventBus, settings) {
         if (htmlElement) htmlElement.style.display = isVisible ? style : "none";
     }
 
-    function getValueFromPath(obj, path) {
-        return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+    function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function showLeaderboardError(message = "Failed to load scores") {
+        if (!elements.leaderboardElement) return;
+        elements.leaderboardElement.innerHTML = `<li class="error">${escapeHtml(
+            message
+        )}</li>`;
     }
 
     function renderLeaderboard(scores) {
-        console.log({scores});
-
         if (!scores || scores.length === 0) {
-            leaderboardElement.innerHTML = '<li class="empty">No scores yet. Be the first!</li>';
+            elements.leaderboardElement.innerHTML =
+                '<li class="empty">No scores yet. Be the first!</li>';
             return;
         }
 
-
-        // Clear existing entries
-        // elements.leaderboardElement.innerHTML = "";
+        elements.leaderboardElement.innerHTML = scores
+            .map((entry, index) => getLeaderboardEntry(entry, index))
+            .join("");
     }
 
-    function handleSettingsSave() {
-        const settingsToSave = {};
-        document
-            .querySelectorAll("#settingsModal [data-config]")
-            .forEach((input) => {
-                const path = input.dataset.config;
-                let value;
+    function getLeaderboardEntry(entry, index) {
+        const medal = getMedal(index);
+        const date = formatDate(entry.timestamp.seconds);
 
-                if (input.type === "checkbox") value = input.checked;
-                else if (input.type === "number") value = parseInt(input.value);
-                else value = input.value;
+        const entryHtml = `
+                    <li class="leaderboard-entry ${
+                        entry.username === localStorage.getItem("username")
+                            ? "current-user"
+                            : ""
+                    }" data-rank="${index + 1}">
+                        <span class="rank">${medal || `#${index + 1}`}</span>
+                        <div class="player-info">
+                            <strong class="username">${escapeHtml(
+                                entry.username
+                            )}</strong>
+                            <span class="level">Level ${entry.level}</span>
+                        </div>
+                        <div class="score-info">
+                            <span class="score">${entry.score}</span>
+                            <span class="date">${date}</span>
+                        </div>
+                    </li>
+                `;
 
-                if (value === undefined || value === null) return;
-                settingsToSave[path] = value;
-            });
-
-        eventBus.emit(EVENTS.UI.SETTINGS.SAVE, settingsToSave);
-        toggleElementVisibility(elements.settingsModal, false);
-    }
-
-    function handleSettingsReset() {
-        if (
-            confirm("Are you sure you want to reset all settings to default?")
-        ) {
-            eventBus.emit(EVENTS.UI.SETTINGS.RESET);
-        }
-    }
-
-    function handleRestartGame() {
-        eventBus.emit(EVENTS.UI.RESTART_REQUESTED);
-    }
-
-    function attachEventListeners() {
-        if (elements.settingsButton)
-            elements.settingsButton.addEventListener(
-                "click",
-                showSettingsModal
-            );
-        if (elements.restartButton)
-            elements.restartButton.addEventListener("click", handleRestartGame);
-        if (elements.saveSettingsButton)
-            elements.saveSettingsButton.addEventListener(
-                "click",
-                handleSettingsSave
-            );
-        if (elements.resetSettingsButton)
-            elements.resetSettingsButton.addEventListener(
-                "click",
-                handleSettingsReset
-            );
+        return entryHtml;
     }
 
     function showUsernameModal() {
@@ -159,6 +142,14 @@ export function createLayoutManager(eventBus, settings) {
         toggleElementVisibility(elements.settingsModal, true);
     }
 
+    function handleSettingsReset() {
+        if (
+            confirm("Are you sure you want to reset all settings to default?")
+        ) {
+            eventBus.emit(EVENTS.UI.SETTINGS.RESET);
+        }
+    }
+
     function syncSettingsToModal(settings) {
         document
             .querySelectorAll("#settingsModal [data-config]")
@@ -168,6 +159,80 @@ export function createLayoutManager(eventBus, settings) {
                 if (input.type === "checkbox") input.checked = value;
                 else input.value = value;
             });
+    }
+
+    function handleSettingsSave() {
+        const settingsToSave = {};
+        document
+            .querySelectorAll("#settingsModal [data-config]")
+            .forEach((input) => {
+                const path = input.dataset.config;
+                let value;
+
+                if (input.type === "checkbox") value = input.checked;
+                else if (input.type === "number") value = parseInt(input.value);
+                else value = input.value;
+
+                if (value === undefined || value === null) return;
+                settingsToSave[path] = value;
+            });
+
+        eventBus.emit(EVENTS.UI.SETTINGS.SAVE, settingsToSave);
+        toggleElementVisibility(elements.settingsModal, false);
+    }
+
+    function getValueFromPath(obj, path) {
+        return path.split(".").reduce((acc, part) => acc && acc[part], obj);
+    }
+
+    function getMedal(index) {
+        const medals = ["🥇", "🥈", "🥉"];
+        return medals[index] || null;
+    }
+
+    function formatDate(timestamp) {
+        if (!timestamp) return "";
+
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
+
+        if (diffMins < 1) return "just now";
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffHours < 24) return `${diffHours}h ago`;
+        if (diffDays < 7) return `${diffDays}d ago`;
+
+        return date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+        });
+    }
+
+    function attachEventListeners() {
+        if (elements.settingsButton)
+            elements.settingsButton.addEventListener(
+                "click",
+                showSettingsModal
+            );
+        if (elements.restartButton)
+            elements.restartButton.addEventListener("click", handleRestartButton);
+        if (elements.saveSettingsButton)
+            elements.saveSettingsButton.addEventListener(
+                "click",
+                handleSettingsSave
+            );
+        if (elements.resetSettingsButton)
+            elements.resetSettingsButton.addEventListener(
+                "click",
+                handleSettingsReset
+            );
+    }
+
+    function handleRestartButton() {
+        eventBus.emit(EVENTS.UI.RESTART_REQUESTED);
     }
 
     function resetAll() {
@@ -218,6 +283,7 @@ export function createLayoutManager(eventBus, settings) {
         showGameOverModal,
         showUsernameModal,
         showSettingsModal,
-        renderLeaderboard
+        renderLeaderboard,
+        showLeaderboardError,
     };
 }

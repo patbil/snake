@@ -1,11 +1,12 @@
-/** @typedef {import('./engine').TickSnapshot} TickSnapshot */
-/** @typedef {import('./config').GameConfig} GameConfig */
-/** @typedef {import('./event').EventBus} EventBus */
+/** @typedef {import('./engine.js').TickSnapshot} TickSnapshot */
+/** @typedef {import('./config.js').GameConfig} GameConfig */
+/** @typedef {import('./event.js').EventBus} EventBus */
+/** @typedef {import('./score.js').ScoreEntry} ScoreEntry */
 
 /**
  * Public API of the Layout Manager.
  * The Layout Manager is responsible for all DOM manipulations and UI updates.
- * 
+ *
  * @typedef {Object} LayoutManager
  * @property {(score: number) => void} setScore - Updates the score display in the UI.
  * @property {(level: number) => void} setLevel - Updates the level display in the UI.
@@ -15,6 +16,9 @@
  * @property {(snapshot: TickSnapshot) => void} showGameOverModal - Displays the game over modal with final statistics.
  * @property {() => Promise<string>} showUsernameModal - Shows the username input modal and waits for user input.
  * @property {() => void} showSettingsModal - Shows the settings modal and synchronizes all input fields
+ * @property {(scores: Array<ScoreEntry>) => void} renderLeaderboard - Shows the settings modal and synchronizes all input fields
+ * @property {(errorMessage: string) => void} showLeaderboardError - Shows the settings modal and synchronizes all input fields
+ *
  */
 
 export {};

@@ -1,4 +1,4 @@
-/** @typedef { import('./engine').TickSnapshot} TickSnapshot */
+/** @typedef { import('./engine.js').TickSnapshot} TickSnapshot */
 
 /**
  * Public API of the Canvas Renderer.

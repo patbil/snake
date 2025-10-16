@@ -16,6 +16,7 @@ export function createGameBus({
     audioManager,
     layoutManager,
     settingsManager,
+    scoreManager,
     keydownHandler,
 }) {
     const settings = settingsManager.getSettings();
@@ -69,6 +70,11 @@ export function createGameBus({
     }
 
     function handleGameOver(snapshot) {
+        scoreManager.addScore({
+            level: snapshot.level,
+            score: snapshot.score,
+            username: localStorage.getItem("username"),
+        });
         layoutManager.showGameOverModal(snapshot);
         audioManager.play("gameover");
         stop();
@@ -97,23 +103,27 @@ export function createGameBus({
         layoutManager.renderLeaderboard(scores);
     }
 
+    function handleLeaderboardError(error) {
+        layoutManager.showLeaderboardError(error.message || error);
+    }
+
     function registerEvents() {
         eventBus.on(EVENTS.MOVE.TOGGLE_PAUSE, handleMovePause);
         eventBus.on(EVENTS.MOVE.CHANGE_DIRECTION, handleMove);
 
-        eventBus.on(EVENTS.STATE.PAUSE, handleStatePause);
-        eventBus.on(EVENTS.STATE.SCORE, handleScore);
-        eventBus.on(EVENTS.STATE.LEVEL_UP, handleLevel);
-        eventBus.on(EVENTS.STATE.GAME_OVER, handleGameOver);
-        eventBus.on(EVENTS.STATE.RESET, handleReset);
+        eventBus.on(EVENTS.LEADERBOARD.ERROR, handleLeaderboardError);
+        eventBus.on(EVENTS.LEADERBOARD.UPDATE, handleLeaderboardUpdate);
 
         eventBus.on(EVENTS.UI.SETTINGS.SAVE, handleSettingsSave);
         eventBus.on(EVENTS.UI.SETTINGS.RESET, handleSettingsReset);
         eventBus.on(EVENTS.UI.OPEN_MODAL, handleModalOpen);
         eventBus.on(EVENTS.UI.RESTART_REQUESTED, restart);
 
-        eventBus.on(EVENTS.LEADERBOARD.UPDATE, handleLeaderboardUpdate);
-
+        eventBus.on(EVENTS.STATE.PAUSE, handleStatePause);
+        eventBus.on(EVENTS.STATE.SCORE, handleScore);
+        eventBus.on(EVENTS.STATE.LEVEL_UP, handleLevel);
+        eventBus.on(EVENTS.STATE.GAME_OVER, handleGameOver);
+        eventBus.on(EVENTS.STATE.RESET, handleReset);
     }
 
     return { registerEvents, start };

@@ -46,6 +46,7 @@ export async function createGame(canvas) {
         audioManager,
         settingsManager,
         keydownHandler,
+        scoreManager
     });
 
     gameBus.registerEvents();

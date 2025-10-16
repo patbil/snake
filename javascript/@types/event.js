@@ -1,4 +1,4 @@
-/** @typedef {import('./events').GameEvents} GameEvents */
+/** @typedef {import('./events.js').GameEvents} GameEvents */
 
 /**
  * Public API of the Event Bus.

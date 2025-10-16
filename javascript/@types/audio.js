@@ -1,4 +1,4 @@
-/** @typedef { import('./config').AudioConfig} AudioConfig */
+/** @typedef { import('./config.js').AudioConfig} AudioConfig */
 
 /**
  * Public API of the Audio Manager.

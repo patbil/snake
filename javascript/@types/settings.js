@@ -1,4 +1,4 @@
-/** @typedef { import('./config').GameConfig} GameConfig */
+/** @typedef { import('./config.js').GameConfig} GameConfig */
 
 /**
  * Public API of the Settings Manager.
