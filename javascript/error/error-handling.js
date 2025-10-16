@@ -13,7 +13,7 @@ export function withErrorHandling(
                 onError(error);
             }
 
-            throw error;
+            return undefined;
         }
     };
 }

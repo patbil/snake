@@ -3,11 +3,19 @@ import { withErrorHandling } from "../error/error-handling.js";
 
 /** @typedef { import("../@types/score.js").ScoreManager } ScoreManager */
 /** @typedef { import("../@types/score.js").ScoreEntry } ScoreEntry */
+/** @typedef { import("../@types/event.js").EventBus } EventBus */
+/** @typedef { import("../@types/firebase.js").FirebaseManager } FirebaseManager */
+
+const LEADERBOARD_LIMIT = 10;
+const SCORES_COLLECTION = "scores";
 
 /**
- * Creates a manager responsible for maintaining the list of best results.
- * @async
- * @returns {Promise<ScoreManager>} 
+ * Creates a manager responsible for maintaining and persisting the leaderboard.
+ * Handles fetching scores from Firebase and adding new scores.
+ * 
+ * @param {EventBus} eventBus - Event bus for emitting leaderboard updates
+ * @param {FirebaseManager} firebase - Firebase manager instance
+ * @returns {ScoreManager} Object with methods to manage scores
  */
 export function createScoreManager(eventBus, firebase) {
     const scores = [];
@@ -22,40 +30,41 @@ export function createScoreManager(eventBus, firebase) {
         eventBus.emit(EVENTS.LEADERBOARD.UPDATE, scores);
     }
 
-    async function addScore(entry) {
-        /** @type {ScoreEntry} */
-        const newEntry = {
-            ...entry,
-            timestamp: Date.now(),
-            username: localStorage.getItem("username"),
-        };
-        await firebase.set("scores", newEntry);
-        updateLeaderboard([newEntry]);
+    function createErrorHandler(message) {
+        return (error) =>
+            eventBus.emit(EVENTS.LEADERBOARD.ERROR, { error, message });
     }
 
     async function fetchScores() {
-        const results = await firebase.getAll("scores", { limit: 10, orderBy: 'score', });
+        const results = await firebase.getAll(SCORES_COLLECTION, {
+            limit: LEADERBOARD_LIMIT,
+            orderBy: "score",
+        });
+        
         if (results) {
             scores.splice(0);
             updateLeaderboard(results);
         }
     }
 
+    async function addScore(entry) {
+        const newEntry = {
+            ...entry,
+            timestamp: Date.now(),
+            username: localStorage.getItem("username"),
+        };
+        
+        await firebase.set(SCORES_COLLECTION, newEntry);
+        updateLeaderboard([newEntry]);
+    }
+
     return {
         getScores: () => scores,
         fetchScores: withErrorHandling(fetchScores, {
-            onError: (error) =>
-                eventBus.emit(EVENTS.LEADERBOARD.ERROR, {
-                    error,
-                    message: "Could not load leaderboard",
-                }),
+            onError: createErrorHandler("Could not load leaderboard"),
         }),
         addScore: withErrorHandling(addScore, {
-            onError: (error) =>
-                eventBus.emit(EVENTS.LEADERBOARD.ERROR, {
-                    error,
-                    message: "Could not save your score",
-                }),
+            onError: createErrorHandler("Could not save your score"),
         }),
     };
 }

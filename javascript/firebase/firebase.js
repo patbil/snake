@@ -28,7 +28,6 @@ import firebaseConfig from "../keys/firebase.json" with { type: "json" };
  */
 export async function createFirebaseManager() {
     const firebaseApp = initializeApp(firebaseConfig);
-
     const database = getFirestore(firebaseApp);
     const loggedUser = await withErrorHandling(authenticate, {
         errorMessage: "Firebase authentication error",
@@ -41,8 +40,8 @@ export async function createFirebaseManager() {
     }
 
     async function getAll(collectionName, params) {
-        const query = queryBuilder(collectionName, params);
-        const snapshot = await getDocs(query);
+        const q = queryBuilder(collectionName, params);
+        const snapshot = await getDocs(q);
         return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     }
 
@@ -81,9 +80,13 @@ export async function createFirebaseManager() {
     }
 
     return {
-        getAll,
-        get,
-        set,
+        getAll: withErrorHandling(getAll, {
+            errorMessage: "Fetching documents error",
+        }),
+        get: withErrorHandling(get, {
+            errorMessage: "Fetching a document error",
+        }),
+        set: withErrorHandling(set, { errorMessage: "Saving document error" }),
         loggedUser,
     };
 }
