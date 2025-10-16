@@ -11,14 +11,6 @@ export const EVENTS = {
         TOGGLE_PAUSE: "MOVE:TOGGLE_PAUSE",
         CHANGE_DIRECTION: "MOVE:CHANGE_DIRECTION",
     },
-    UI: {
-        RESTART_REQUESTED: "UI:RESTART_REQUESTED",
-        OPEN_MODAL: "UI:OPEN_MODAL",
-        SETTINGS: {
-            SAVE: "UI:SAVE_SETTINGS",
-            RESET: "UI:RESET_SETTINGS",
-        },
-    },
     STATE: {
         DIRECTION: "STATE:DIRECTION",
         PAUSE: "STATE:PAUSE",
@@ -28,5 +20,18 @@ export const EVENTS = {
         GAME_OVER: "STATE:GAME_OVER",
         SEGMENTS: "STATE:SEGMENTS",
         RESET: "STATE:RESET",
+    },
+    LEADERBOARD: {
+        UPDATE: "LEADERBOARD:UPDATE",
+        FETCH: "LEADERBOARD:FETCH",
+        ERROR: "LEADERBOARD:ERROR",
+    },
+    UI: {
+        RESTART_REQUESTED: "UI:RESTART_REQUESTED",
+        OPEN_MODAL: "UI:OPEN_MODAL",
+        SETTINGS: {
+            SAVE: "UI:SAVE_SETTINGS",
+            RESET: "UI:RESET_SETTINGS",
+        },
     },
 };

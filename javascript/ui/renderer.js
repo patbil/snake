@@ -1,6 +1,6 @@
 /** @typedef {import('../@types/config').ColorConfig} ColorConfig */
 /** @typedef {import('../@types/config').CanvasConfig} CanvasConfig */
-/** @typedef {import('../@types/renderer').RendererPublicAPI} RendererPublicAPI */
+/** @typedef {import('../@types/renderer').Renderer} Renderer */
 
 /**
  * Creates the Renderer module, responsible for drawing the game state onto a Canvas element.
@@ -8,7 +8,7 @@
  * @param {HTMLCanvasElement} canvasElement - The canvas element where the game will be drawn.
  * @param {ColorConfig} colors - Colors configuration for snake, apple, and background.
  * @param {CanvasConfig} canvas - Canvas configuration (size and grid count).
- * @returns {RendererPublicAPI} The public renderer interface.
+ * @returns {Renderer} The public renderer interface.
  */
 export function createRenderer(canvasElement, colors, canvas) {
     const ctx = canvasElement.getContext("2d");

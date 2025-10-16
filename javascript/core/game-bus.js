@@ -1,13 +1,13 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import("../@types/game-bus.js").GameBusPublicAPI} GameBusPublicAPI */
+/** @typedef {import("../@types/game-bus.js").GameBus} GameBus */
 /** @typedef {import("../@types/game-bus.js").GameBusDependencies} GameBusDependencies */
 
 /**
  * Module that binds events emitted by the Engine and UI
  * to the corresponding actions executed by the Renderer, AudioManager, and Loop.
  * @param {GameBusDependencies} dependencies
- * @returns {GameBusPublicAPI}
+ * @returns {GameBus}
  */
 export function createGameBus({
     eventBus,
@@ -16,6 +16,7 @@ export function createGameBus({
     audioManager,
     layoutManager,
     settingsManager,
+    scoreManager,
     keydownHandler,
 }) {
     const settings = settingsManager.getSettings();
@@ -68,10 +69,14 @@ export function createGameBus({
         loop.setSpeed(newSpeed);
     }
 
-    function handleGameOver(snapshot) {
-        layoutManager.showGameOverModal(snapshot);
-        audioManager.play("gameover");
+    async function handleGameOver(snapshot) {
         stop();
+        audioManager.play("gameover");
+        layoutManager.showGameOverModal(snapshot);
+        await scoreManager.addScore({
+            level: snapshot.level,
+            score: snapshot.score,
+        });
     }
 
     function handleReset() {
@@ -93,20 +98,31 @@ export function createGameBus({
         engine.togglePause({ emitEvent: false });
     }
 
+    function handleLeaderboardUpdate(scores) {
+        layoutManager.renderLeaderboard(scores);
+    }
+
+    function handleLeaderboardError(error) {
+        layoutManager.showLeaderboardError(error.message || error);
+    }
+
     function registerEvents() {
         eventBus.on(EVENTS.MOVE.TOGGLE_PAUSE, handleMovePause);
         eventBus.on(EVENTS.MOVE.CHANGE_DIRECTION, handleMove);
+
+        eventBus.on(EVENTS.LEADERBOARD.ERROR, handleLeaderboardError);
+        eventBus.on(EVENTS.LEADERBOARD.UPDATE, handleLeaderboardUpdate);
+
+        eventBus.on(EVENTS.UI.SETTINGS.SAVE, handleSettingsSave);
+        eventBus.on(EVENTS.UI.SETTINGS.RESET, handleSettingsReset);
+        eventBus.on(EVENTS.UI.OPEN_MODAL, handleModalOpen);
+        eventBus.on(EVENTS.UI.RESTART_REQUESTED, restart);
 
         eventBus.on(EVENTS.STATE.PAUSE, handleStatePause);
         eventBus.on(EVENTS.STATE.SCORE, handleScore);
         eventBus.on(EVENTS.STATE.LEVEL_UP, handleLevel);
         eventBus.on(EVENTS.STATE.GAME_OVER, handleGameOver);
         eventBus.on(EVENTS.STATE.RESET, handleReset);
-
-        eventBus.on(EVENTS.UI.SETTINGS.SAVE, handleSettingsSave);
-        eventBus.on(EVENTS.UI.SETTINGS.RESET, handleSettingsReset);
-        eventBus.on(EVENTS.UI.OPEN_MODAL, handleModalOpen);
-        eventBus.on(EVENTS.UI.RESTART_REQUESTED, restart);
     }
 
     return { registerEvents, start };

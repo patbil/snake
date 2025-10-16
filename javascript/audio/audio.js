@@ -1,12 +1,12 @@
 /** @typedef {import('../@types/config').AudioConfig} AudioConfig */
-/** @typedef {import('../@types/audio').AudioManagerPublicAPI} AudioManagerPublicAPI */
+/** @typedef {import('../@types/audio').AudioManager} AudioManager */
 
 /**
  * Creates the Audio Manager module.
  * Handles sound effects: loading, caching, and playback.
  *
  * @param {AudioConfig} audioSettings - Sound configuration (volume, enabled, sound paths).
- * @returns {AudioManagerPublicAPI} Public interface for controlling audio playback.
+ * @returns {AudioManager} Public interface for controlling audio playback.
  */
 export function createAudioManager(audioSettings) {
     const audioCache = {};

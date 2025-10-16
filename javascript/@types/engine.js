@@ -13,7 +13,7 @@
  * Public API of the Game Engine module.
  * The Engine is responsible for core game logic including snake movement, collision detection, apple spawning, and score/level management.
  * 
- * @typedef {Object} EnginePublicAPI
+ * @typedef {Object} GameEngine
  * @property {() => TickSnapshot} tick - Executes one game tick: moves the snake, checks collisions,handles apple consumption, and returns the current game state.
  * @property {(x: number, y: number) => void} setDirection - Sets the movement direction of the snake's head.
  * @property {(options: {emitEvent: boolean}) => void} togglePause - Pauses or resumes the game.

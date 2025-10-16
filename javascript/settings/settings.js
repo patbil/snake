@@ -1,13 +1,13 @@
 import { config } from "./config.js";
 
-/** @typedef {import('../@types/settings.js').SettingsManagerPublicAPI} SettingsManagerPublicAPI */
+/** @typedef {import('../@types/settings.js').SettingsManager} SettingsManager */
 
 /**
  * Creates the Settings Manager module.
  * Manages loading, storing, and accessing the game configuration,
  * persisting configurable options to the browser's localStorage.
  *
- * @returns {SettingsManagerPublicAPI} The public interface for managing settings.
+ * @returns {SettingsManager} The public interface for managing settings.
  */
 export function createSettingsManager() {
     const settings = structuredClone(config);

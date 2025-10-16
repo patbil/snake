@@ -22,7 +22,7 @@
  * The State Manager is responsible for maintaining and safely manipulating
  * all mutable game state. 
  *
- * @typedef {Object} GameStatePublicAPI
+ * @typedef {Object} GameState
  * @property {() => StateSnapshot} getSnapshot - Returns a shallow copy of the current game state.
  * @property {(x: number, y: number) => void} setDirection - Updates the snake's movement direction.
  * @property {(options: TogglePauseOptions) => void} togglePause - Toggles the game's pause state.

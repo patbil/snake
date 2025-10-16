@@ -1,14 +1,14 @@
 import { EVENTS } from "../events/events.js";
 
-/** @typedef {import('../@types/event.js').EventBusPublicAPI} EventBus */
-/** @typedef {import('../@types/handler.js').HandlerPublicAPI} HandlerPublicAPI */
+/** @typedef {import('../@types/event.js').EventBus} EventBus */
+/** @typedef {import('../@types/handler.js').KeydownHandler} KeydownHandler */
 
 /**
  * Creates the Keydown Handler module.
  * Listens for global key presses and maps them to input commands emitted onto the Event Bus.
  *
  * @param {EventBus} eventBus - Event Bus used to broadcast user input commands.
- * @returns {HandlerPublicAPI}
+ * @returns {KeydownHandler}
  */
 export function createKeydownHandler(eventBus) {
     const directionMap = {

@@ -1,8 +1,8 @@
 import { createStateManager } from "./state.js";
 
 /** @typedef {import('../@types/config.js').GameConfig} GameConfig */
-/** @typedef {import('../@types/events.js').EventBusPublicAPI} EventBus */
-/** @typedef {import('../@types/engine.js').EnginePublicAPI} EnginePublicAPI */
+/** @typedef {import('../@types/events.js').EventBus} EventBus */
+/** @typedef {import('../@types/engine.js').GameEngine} GameEngine */
 
 /**
  * Creates the Game Engine module.
@@ -10,17 +10,13 @@ import { createStateManager } from "./state.js";
  *
  * @param {GameConfig} settings - Game configuration object.
  * @param {EventBus} eventBus - Central Event Bus for emitting state change events.
- * @returns {EnginePublicAPI}
+ * @returns {GameEngine}
  */
 export function createEngine(eventBus, settings) {
     const stateManager = createStateManager(eventBus, settings);
     const gridCount = settings.canvas.grid;
-    let initialized = false;
 
-    function initialize() {
-        setDefault();
-        initialized = true;
-    }
+    setDefault();
 
     function togglePause({ emitEvent }) {
         stateManager.togglePause({ emitEvent });
@@ -80,8 +76,6 @@ export function createEngine(eventBus, settings) {
     }
 
     function tick() {
-        if (!initialized) initialize();
-
         let state = stateManager.snapshot();
         if (state.direction.x !== 0 || state.direction.y !== 0) {
             state = handleMovement(state);
@@ -104,6 +98,7 @@ export function createEngine(eventBus, settings) {
             level: state.level,
         };
     }
+
 
     return { tick, setDirection, togglePause, setDefault };
 }
