@@ -1,10 +1,4 @@
 /**
- * @typedef {Object} FirebaseTimestamp
- * @prop {number} seconds - Seconds since Unix epoch.
- * @prop {number} nanoseconds - Nanoseconds within second.
- */
-
-/**
  * A single entry in the leaderboard.
  * Represents one completed game session with player information and results.
  *
@@ -12,7 +6,7 @@
  * @property {string} username - Player's username.
  * @property {number} score - Player's final score.
  * @property {number} level - Final level reached by the player.
- * @property {FirebaseTimestamp} timestamp - Firebase Timestamp object representing when the score was recorded.
+ * @property {number} timestamp - Timestamp when the score was recorded.
  */
 
 /**
@@ -22,7 +16,8 @@
  * @typedef {Object} ScoreManager
  * @property {() => Promise<ScoreEntry[]>} fetchScores - Fetches scores from remote storage 
  * @property {(Omit<ScoreEntry, 'timestamp'>) => Promise<ScoreResult>} addScore - Adds a new score to the leaderboard.
- * @property {(limit?: number) => Promise<ScoreEntry[]>} getLeaderboard
+ * @property {(limit?: number) => Promise<ScoreEntry[]>} fetchScores - Fetches top scores from remote storage.
+ * @property {() => Promise<void>} getScores - Return list of all scores.
  */
 
 export {};

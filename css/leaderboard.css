@@ -1,5 +1,7 @@
 .leaderboard {
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .leaderboard h2 {
@@ -11,14 +13,14 @@
 }
 
 .leaderboard ul {
-    height: 100%;
     list-style: none;
     padding: 0 10px 0 0;
     margin-top: var(--ui-gap-lg);
     display: flex;
     flex-direction: column;
     gap: var(--ui-gap-sm);
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .leaderboard li {

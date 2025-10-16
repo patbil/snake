@@ -1,6 +1,14 @@
 import { EVENTS } from "../events/events.js";
 import { withErrorHandling } from "../error/error-handling.js";
 
+/** @typedef { import("../@types/score.js").ScoreManager } ScoreManager */
+/** @typedef { import("../@types/score.js").ScoreEntry } ScoreEntry */
+
+/**
+ * Creates a manager responsible for maintaining the list of best results.
+ * @async
+ * @returns {Promise<ScoreManager>} 
+ */
 export function createScoreManager(eventBus, firebase) {
     const scores = [];
 
@@ -15,9 +23,10 @@ export function createScoreManager(eventBus, firebase) {
     }
 
     async function addScore(entry) {
+        /** @type {ScoreEntry} */
         const newEntry = {
             ...entry,
-            timestamp: new Date(),
+            timestamp: Date.now(),
             username: localStorage.getItem("username"),
         };
         await firebase.set("scores", newEntry);
@@ -25,7 +34,7 @@ export function createScoreManager(eventBus, firebase) {
     }
 
     async function fetchScores() {
-        const results = await firebase.getAll("scores");
+        const results = await firebase.getAll("scores", { limit: 10, orderBy: 'score', });
         if (results) {
             scores.splice(0);
             updateLeaderboard(results);

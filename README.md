@@ -45,8 +45,18 @@ Then open `http://localhost:8000` in your browser.
 snake/
 ├── index.html                      # Main HTML entry point
 ├── css/
-│   ├── main.css                    # Core styles and theme
-│   └── modal.css                   # Modal component styles
+│   ├── index.css                   # Core styles
+│   ├── modal.css                   # Modal component styles
+│   ├── leaderboard.css             # Leaderboard styles
+│   ├── settings-modal.css          # Settings modal styles
+│   └── variables.css               # CSS variables/theme
+├── assets/
+│   ├── images/
+│   │   └── snake.svg               # Game logo
+│   └── sound/
+│       ├── collect.mp3             # Collectible sound
+│       ├── game-over.mp3           # Game over sound
+│       └── level-up.mp3            # Level up sound
 └── javascript/
     ├── index.js                    # Application entry point
     ├── core/                       
@@ -68,10 +78,20 @@ snake/
     │   └── config.js               # Default configuration
     ├── audio/                      
     │   └── audio.js                # Audio manager
+    ├── score/
+    │   └── score.js                # Score management and leaderboard
+    ├── firebase/
+    │   └── firebase.js             # Firebase Firestore manager
+    ├── error/
+    │   └── error-handling.js       # Error handling utilities
+    ├── keys/
+    │   └── firebase.json           # Firebase configuration (git-ignored)
     └── @types/                     # JSDoc type definitions
         ├── game.js                 # Main game types
-        ├── game-bus.js             # Game bus coordinator types
+        ├── game-bus.js             # Game bus types
         ├── engine.js               # Game engine types
+        ├── firebase.js             # Firebase manager types
+        ├── audio.js                # Audio manager types
         └── ...
 ```
 
@@ -99,5 +119,16 @@ This project uses JSDoc for type checking without TypeScript:
 function doSomething(engine) {
     // VS Code provides full autocomplete and type checking
 }
+```
+
+### Firebase Integration
+
+The game includes Firebase Firestore integration for:
+- Leaderboard management
+- Score tracking and persistence
+
+**Using a Different Database**: You can easily swap Firebase for another backend by replacing the configuration in `javascript/keys/firebase.json` and updating the Firebase module to use your preferred database API.
+
+---
 
 **Enjoy the game! 🐍🎮**

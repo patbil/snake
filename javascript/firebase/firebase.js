@@ -7,6 +7,9 @@ import {
     updateDoc,
     collection,
     doc,
+    query,
+    limit,
+    orderBy,
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import {
     getAuth,
@@ -37,9 +40,9 @@ export async function createFirebaseManager() {
         return userCredential.user;
     }
 
-    async function getAll(collectionName) {
-        const collectionRef = collection(database, collectionName);
-        const snapshot = await getDocs(collectionRef);
+    async function getAll(collectionName, params) {
+        const query = queryBuilder(collectionName, params);
+        const snapshot = await getDocs(query);
         return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     }
 
@@ -58,6 +61,23 @@ export async function createFirebaseManager() {
         } else {
             await addDoc(collectionRef, data);
         }
+    }
+
+    function queryBuilder(collectionName, params) {
+        const collectionRef = collection(database, collectionName);
+        const constraints = [];
+
+        if (params && params.orderBy) {
+            constraints.push(orderBy(params.orderBy));
+        }
+
+        if (params && params.limit) {
+            constraints.push(limit(params.limit));
+        }
+
+        return constraints.length > 0
+            ? query(collectionRef, ...constraints)
+            : collectionRef;
     }
 
     return {

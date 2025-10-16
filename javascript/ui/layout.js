@@ -69,7 +69,7 @@ export function createLayoutManager(eventBus, settings) {
 
     function getLeaderboardEntry(entry, index) {
         const medal = getMedal(index);
-        const date = formatDate(entry.timestamp.seconds);
+        const date = formatDate(entry.timestamp);
 
         const entryHtml = `
                     <li class="leaderboard-entry ${
