@@ -1,16 +1,8 @@
-import { withErrorHandling } from "../error/error-handling.js";
 import { EVENTS } from "../events/events.js";
+import { withErrorHandling } from "../error/error-handling.js";
 
 export function createScoreManager(eventBus, firebase) {
-    const scores = new Array();
-
-    function getScores() {
-        return scores;
-    }
-
-    function clearScores() {
-        scores.splice(0);
-    }
+    const scores = [];
 
     function sortScores() {
         return scores.sort((a, b) => b.score - a.score);
@@ -22,40 +14,39 @@ export function createScoreManager(eventBus, firebase) {
         eventBus.emit(EVENTS.LEADERBOARD.UPDATE, scores);
     }
 
-    const addScore = withErrorHandling(
-        async (entry) => {
-            await firebase.set("scores", {
-                ...entry,
-                timestamp: Date.now(),
-                username: localStorage.getItem("username"),
-            });
-        },
-        {
-            onError: (error) =>
-                eventBus.emit(EVENTS.LEADERBOARD.ERROR, {
-                    error,
-                    message: "Could not save your score",
-                }),
-        }
-    );
+    async function addScore(entry) {
+        const newEntry = {
+            ...entry,
+            timestamp: new Date(),
+            username: localStorage.getItem("username"),
+        };
+        await firebase.set("scores", newEntry);
+        updateLeaderboard([newEntry]);
+    }
 
-    const fetchScores = withErrorHandling(
-        async () => {
-            const results = await firebase.getAll("scores");
-            if (results) {
-                clearScores();
-                updateLeaderboard(results);
-            }
-        },
-        {
+    async function fetchScores() {
+        const results = await firebase.getAll("scores");
+        if (results) {
+            scores.splice(0);
+            updateLeaderboard(results);
+        }
+    }
+
+    return {
+        getScores: () => scores,
+        fetchScores: withErrorHandling(fetchScores, {
             onError: (error) =>
                 eventBus.emit(EVENTS.LEADERBOARD.ERROR, {
                     error,
                     message: "Could not load leaderboard",
                 }),
-        }
-    );
-
-
-    return { addScore, getScores, fetchScores };
+        }),
+        addScore: withErrorHandling(addScore, {
+            onError: (error) =>
+                eventBus.emit(EVENTS.LEADERBOARD.ERROR, {
+                    error,
+                    message: "Could not save your score",
+                }),
+        }),
+    };
 }

@@ -70,13 +70,13 @@ export function createGameBus({
     }
 
     async function handleGameOver(snapshot) {
+        stop();
+        audioManager.play("gameover");
+        layoutManager.showGameOverModal(snapshot);
         await scoreManager.addScore({
             level: snapshot.level,
             score: snapshot.score,
         });
-        layoutManager.showGameOverModal(snapshot);
-        audioManager.play("gameover");
-        stop();
     }
 
     function handleReset() {

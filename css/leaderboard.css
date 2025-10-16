@@ -1,3 +1,6 @@
+.leaderboard {
+    overflow: hidden;
+}
 
 .leaderboard h2 {
     font-family: var(--secondary-font);
@@ -8,12 +11,14 @@
 }
 
 .leaderboard ul {
+    height: 100%;
     list-style: none;
-    padding: 0;
+    padding: 0 10px 0 0;
     margin-top: var(--ui-gap-lg);
     display: flex;
     flex-direction: column;
     gap: var(--ui-gap-sm);
+    overflow: auto;
 }
 
 .leaderboard li {
@@ -33,9 +38,14 @@
 }
 
 .leaderboard li.current-user {
-    background: linear-gradient(180deg, rgba(21, 199, 138, 0.08), rgba(21, 199, 138, 0.02));
+    background: linear-gradient(
+        180deg,
+        rgba(21, 199, 138, 0.08),
+        rgba(21, 199, 138, 0.02)
+    );
     border-color: rgba(21, 199, 138, 0.3);
 }
+
 .leaderboard li.loading,
 .leaderboard li.error,
 .leaderboard li.empty {
@@ -43,6 +53,7 @@
     color: var(--muted);
     font-style: italic;
 }
+
 .leaderboard li.error {
     color: #ff6b6b;
 }
@@ -52,36 +63,43 @@
     align-items: center;
     gap: 12px;
 }
+
 .leaderboard-entry .rank {
     font-size: 18px;
     min-width: 32px;
     text-align: center;
 }
+
 .leaderboard-entry .player-info {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 2px;
 }
+
 .leaderboard-entry .username {
     color: #fff;
     font-size: 14px;
 }
+
 .leaderboard-entry .level {
     color: var(--muted);
     font-size: 11px;
 }
+
 .leaderboard-entry .score-info {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 2px;
 }
+
 .leaderboard-entry .score {
     color: var(--accent);
     font-weight: 600;
     font-size: 16px;
 }
+
 .leaderboard-entry .date {
     color: var(--muted);
     font-size: 10px;
@@ -93,4 +111,3 @@
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     text-align: center;
 }
-
