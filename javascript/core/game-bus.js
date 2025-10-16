@@ -69,11 +69,10 @@ export function createGameBus({
         loop.setSpeed(newSpeed);
     }
 
-    function handleGameOver(snapshot) {
-        scoreManager.addScore({
+    async function handleGameOver(snapshot) {
+        await scoreManager.addScore({
             level: snapshot.level,
             score: snapshot.score,
-            username: localStorage.getItem("username"),
         });
         layoutManager.showGameOverModal(snapshot);
         audioManager.play("gameover");

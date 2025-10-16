@@ -50,6 +50,7 @@ export async function createGame(canvas) {
     });
 
     gameBus.registerEvents();
+    await scoreManager.fetchScores();
 
     function initialize() {
         const username = localStorage.getItem("username");
