@@ -67,7 +67,7 @@ export async function createFirebaseManager() {
         const constraints = [];
 
         if (params && params.orderBy) {
-            constraints.push(orderBy(params.orderBy));
+            constraints.push(orderBy(params.orderBy, params?.orderDir ?? "desc"));
         }
 
         if (params && params.limit) {

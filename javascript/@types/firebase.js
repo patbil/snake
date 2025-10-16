@@ -2,6 +2,7 @@
  * @typedef {Object} QuerParams
  * @property {number} limit - Maximum number of results to return.
  * @property {string} orderBy - Field name for sorting the query results.
+ * @property {"desc" | "asc"} orderDir - Sorting direction.
  */
 
 /**
