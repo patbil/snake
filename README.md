@@ -91,7 +91,6 @@ snake/
         ├── game-bus.js             # Game bus types
         ├── engine.js               # Game engine types
         ├── firebase.js             # Firebase manager types
-        ├── audio.js                # Audio manager types
         └── ...
 ```
 
