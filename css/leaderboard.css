@@ -1,115 +1,158 @@
 .leaderboard {
+    height: 100%;
     display: flex;
     flex-direction: column;
-    min-height: 500px;
+    padding: var(--panel-pad);
+    overflow: hidden;
 }
 
-.leaderboard h2 {
-    font-family: var(--secondary-font);
-    font-size: 12px;
+/* ─── Header ─────────────────────────────────────────────────────────── */
+.leaderboard-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    margin-bottom: var(--sp-4);
+    padding-bottom: var(--sp-3);
+    border-bottom: 1px solid var(--border);
+}
+
+.leaderboard-title span:first-child {
+    font-family: var(--font-game);
+    font-size: 9px;
     color: var(--accent);
-    text-align: center;
-    margin: 0 0 var(--ui-gap-md);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
 }
 
+.lb-trophy {
+    font-size: 14px;
+}
+
+/* ─── List ───────────────────────────────────────────────────────────── */
 .leaderboard ul {
+    flex: 1;
     list-style: none;
-    padding: 0 10px 0 0;
-    margin-top: var(--ui-gap-lg);
+    margin: 0;
+    padding: 0 2px 0 0;
     display: flex;
     flex-direction: column;
-    gap: var(--ui-gap-sm);
+    gap: 4px;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
+/* ─── Entry ──────────────────────────────────────────────────────────── */
 .leaderboard li {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-radius: var(--radius-sm);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.2s ease;
+    gap: var(--sp-3);
+    padding: 9px 10px;
+    border-radius: var(--r-sm);
+    border: 1px solid transparent;
+    background: transparent;
+    transition:
+        background var(--t-base),
+        border-color var(--t-base);
+    cursor: default;
 }
 
 .leaderboard li:hover {
-    background: linear-gradient(180deg, rgba(21, 199, 138, 0.05), transparent);
-    border-color: rgba(21, 199, 138, 0.2);
+    background: rgba(21, 199, 138, 0.04);
+    border-color: rgba(21, 199, 138, 0.1);
 }
 
 .leaderboard li.current-user {
-    background: linear-gradient(
-        180deg,
-        rgba(21, 199, 138, 0.08),
-        rgba(21, 199, 138, 0.02)
-    );
-    border-color: rgba(21, 199, 138, 0.3);
+    background: rgba(21, 199, 138, 0.07);
+    border-color: rgba(21, 199, 138, 0.2);
 }
 
+/* Top 3 glow */
+.leaderboard li[data-rank="1"] .rank {
+    filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
+}
+.leaderboard li[data-rank="2"] .rank {
+    filter: drop-shadow(0 0 4px rgba(192, 192, 192, 0.5));
+}
+.leaderboard li[data-rank="3"] .rank {
+    filter: drop-shadow(0 0 4px rgba(205, 127, 50, 0.5));
+}
+
+/* State items */
 .leaderboard li.loading,
-.leaderboard li.error,
-.leaderboard li.empty {
+.leaderboard li.empty,
+.leaderboard li.error {
     justify-content: center;
-    color: var(--muted);
+    font-size: 11px;
     font-style: italic;
+    color: var(--text-2);
+    border: none;
+    background: none;
+    padding: var(--sp-5) 0;
 }
 
 .leaderboard li.error {
-    color: #ff6b6b;
+    color: var(--danger);
 }
 
-.leaderboard-entry {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.leaderboard-entry .rank {
-    font-size: 18px;
-    min-width: 32px;
+/* ─── Entry internals ────────────────────────────────────────────────── */
+.rank {
+    font-size: 14px;
+    min-width: 26px;
     text-align: center;
+    flex-shrink: 0;
+    line-height: 1;
 }
 
-.leaderboard-entry .player-info {
+.player-info {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-width: 0;
 }
 
-.leaderboard-entry .username {
-    color: #fff;
-    font-size: 14px;
+.username {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.leaderboard-entry .level {
-    color: var(--muted);
-    font-size: 11px;
+.level {
+    font-size: 10px;
+    color: var(--text-2);
 }
 
-.leaderboard-entry .score-info {
+.score-info {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 2px;
+    flex-shrink: 0;
 }
 
-.leaderboard-entry .score {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 16px;
-}
-
-.leaderboard-entry .date {
-    color: var(--muted);
+.score {
+    font-family: var(--font-game);
     font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.5px;
 }
 
+.date {
+    font-size: 10px;
+    color: var(--text-3);
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────── */
 .leaderboard-footer {
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+    margin-top: var(--sp-4);
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--border);
     text-align: center;
+    font-size: 10px;
+    color: var(--text-3);
 }

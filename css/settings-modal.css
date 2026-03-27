@@ -1,89 +1,95 @@
-.setting-group {
-    padding: 0;
-    margin-bottom: var(--ui-gap-sm);
+.settings-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
     width: 100%;
 }
 
-.setting-group h3 {
-    color: var(--accent);
-    border-bottom: 1px dashed var(--muted);
-    padding-bottom: var(--ui-gap-sm);
-    margin-bottom: var(--ui-gap-md);
-    font-size: 1em;
-}
-
-.setting-control {
+/* ─── Group ──────────────────────────────────────────────────────────── */
+.setting-group {
     display: flex;
     flex-direction: column;
-    padding: 0.25em 0;
-    gap: var(--ui-gap-sm);
-    justify-content: center;
+    gap: var(--sp-3);
 }
 
-.control-row {
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.setting-group input[type="number"] {
-    width: 80px;
-    padding: var(--ui-gap-sm);
+.setting-group h3 {
     margin: 0;
-    border: 1px solid var(--accent);
-    border-radius: var(--radius-sm);
-    background-color: var(--card-bg);
-    color: var(--text-color);
+    font-family: var(--font-ui);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-2);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--border);
+}
+
+/* ─── Control ────────────────────────────────────────────────────────── */
+.setting-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+}
+
+.setting-control label {
+    font-size: 13px;
+    color: var(--text-1);
+    cursor: pointer;
+    flex: 1;
+}
+
+/* ─── Inputs ─────────────────────────────────────────────────────────── */
+.setting-group input[type="number"] {
+    width: 76px;
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-2);
+    border-radius: var(--r-sm);
+    color: var(--text-1);
+    font-family: var(--font-game);
+    font-size: 10px;
     text-align: right;
-    font-family: var(--primary-font);
+    outline: none;
+    transition: border-color var(--t-base), box-shadow var(--t-base);
+    flex-shrink: 0;
+}
+
+.setting-group input[type="number"]:focus {
+    border-color: var(--accent-border);
+    box-shadow: 0 0 0 3px rgba(21, 199, 138, 0.1);
+}
+
+.setting-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .setting-group input[type="color"] {
-    padding: 0;
-}
-
-.setting-info {
-    font-size: 0.8em;
-    color: var(--muted);
-    text-align: center;
-    margin-top: var(--ui-gap-sm);
-    margin-bottom: var(--ui-gap-md);
-}
-
-.setting-group label[for="setting-sound"] input[type="checkbox"] {
-    margin: 0;
-}
-
-.modal-content button {
-    width: 50%;
-    padding: var(--ui-gap-sm);
-    margin-top: var(--ui-gap-lg);
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 1em;
-    font-weight: bold;
+    width: 40px;
+    height: 30px;
+    padding: 2px 3px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-2);
+    border-radius: var(--r-sm);
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-    box-shadow: var(--shadow-inset);
+    outline: none;
+    flex-shrink: 0;
+    transition: border-color var(--t-base);
 }
 
-#saveSettingsButton {
-    background-color: var(--accent);
-    color: var(--bg-1);
+.setting-group input[type="color"]:hover,
+.setting-group input[type="color"]:focus {
+    border-color: var(--accent-border);
 }
 
-#saveSettingsButton:hover {
-    background-color: #19e3a0;
-    transform: translateY(-1px);
-}
-
-#resetSettingsButton {
-    background-color: #f44336;
-    color: var(--text-color);
-    margin-bottom: 0;
-}
-
-#resetSettingsButton:hover {
-    background-color: #da190b;
-    transform: translateY(-1px);
+/* ─── Hint ───────────────────────────────────────────────────────────── */
+.setting-info {
+    font-size: 10px;
+    color: var(--text-2);
+    text-align: right;
+    letter-spacing: 0.3px;
 }

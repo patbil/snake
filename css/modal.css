@@ -1,36 +1,134 @@
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    display: none;
+@keyframes modal-in {
+    from { opacity: 0; transform: scale(0.97) translateY(6px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0);   }
 }
 
-.modal-content {
-    background-color: var(--bg-modal);
-    color: var(--text-color);
-    padding: var(--section-padding);
-    border: 2px solid var(--accent);
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 6, 10, 0.72);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: var(--sp-6);
+}
 
-    border-radius: var(--radius-sm);
-    max-width: 500px;
-    width: 80%;
+/* ─── Box ────────────────────────────────────────────────────────────── */
+.modal-content {
+    width: 100%;
+    max-width: 440px;
+    background: rgba(7, 10, 16, 0.96);
+    border-top:    1px solid var(--accent-border);
+    border-left:   1px solid var(--border-2);
+    border-right:  1px solid var(--border-2);
+    border-bottom: 1px solid var(--border-2);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-modal);
+    padding: var(--sp-6);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    box-shadow: var(--glass-shadow);
+    gap: var(--sp-5);
+    animation: modal-in 0.2s ease forwards;
+}
+
+.modal-content--sm { max-width: 360px; }
+
+/* ─── Header ─────────────────────────────────────────────────────────── */
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-1);
+    text-align: center;
 }
 
 .modal-content h2 {
-    margin-top: 0;
-    color: #4caf50;
+    margin: 0;
+    font-family: var(--font-game);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px var(--accent-glow);
 }
 
+.modal-subtitle {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-2);
+}
+
+/* ─── Actions row ────────────────────────────────────────────────────── */
+.modal-actions {
+    display: flex;
+    gap: var(--sp-3);
+}
+
+.modal-actions .btn { flex: 1; }
+
+/* ─── State modal ────────────────────────────────────────────────────── */
+/* JS sets display: block on these elements, so we use margin-based spacing */
+.modal-state {
+    text-align: center;
+}
+
+.state-icon {
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: var(--sp-3);
+}
+
+.state-title {
+    margin: 0 0 var(--sp-2);
+    font-family: var(--font-game);
+    font-size: 11px;
+    color: var(--text-1);
+    letter-spacing: 2px;
+}
+
+.state-hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-2);
+}
+
+/* Restart button spacing when inside block-display state container */
+#restartButton { margin-top: var(--sp-5); }
+
+/* ─── Score summary ──────────────────────────────────────────────────── */
+.score-summary {
+    margin: var(--sp-4) 0;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: var(--sp-3) var(--sp-4);
+}
+
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 3px 0;
+}
+
+.score-row span { color: var(--text-2); }
+.score-row strong {
+    font-family: var(--font-game);
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 400;
+}
+
+/* ─── Error message ──────────────────────────────────────────────────── */
 .error-message {
-    color: rgba(150, 40, 40, 1);
+    font-size: 11px;
+    color: var(--danger);
+    background: var(--danger-dim);
+    border: 1px solid var(--danger-border);
+    border-radius: var(--r-sm);
+    padding: var(--sp-2) var(--sp-3);
+    text-align: center;
+    width: 100%;
 }
