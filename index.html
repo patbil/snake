@@ -25,25 +25,65 @@
                         <h3>Game Rules</h3>
                         <div class="setting-control">
                             <label for="setting-segments">Start Segments</label>
-                            <input
-                                type="number"
-                                id="setting-segments"
-                                data-config="initialSegmentCount"
-                                min="2"
-                                max="10"
-                            />
+                            <div class="stepper">
+                                <button
+                                    type="button"
+                                    class="stepper-btn"
+                                    onclick="this.nextElementSibling.stepDown()"
+                                    aria-label="Decrease"
+                                >
+                                    −
+                                </button>
+                                <input
+                                    type="number"
+                                    id="setting-segments"
+                                    data-config="initialSegmentCount"
+                                    min="2"
+                                    max="10"
+                                />
+                                <button
+                                    type="button"
+                                    class="stepper-btn"
+                                    onclick="
+                                        this.previousElementSibling.stepUp()
+                                    "
+                                    aria-label="Increase"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
                         <div class="setting-control">
                             <label for="setting-levelstep"
                                 >Level Step (Score)</label
                             >
-                            <input
-                                type="number"
-                                id="setting-levelstep"
-                                data-config="levelStep"
-                                min="1"
-                                max="10"
-                            />
+                            <div class="stepper">
+                                <button
+                                    type="button"
+                                    class="stepper-btn"
+                                    onclick="this.nextElementSibling.stepDown()"
+                                    aria-label="Decrease"
+                                >
+                                    −
+                                </button>
+                                <input
+                                    type="number"
+                                    id="setting-levelstep"
+                                    data-config="levelStep"
+                                    min="1"
+                                    max="10"
+                                />
+                                <button
+                                    type="button"
+                                    class="stepper-btn"
+                                    onclick="
+                                        this.previousElementSibling.stepUp()
+                                    "
+                                    aria-label="Increase"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -51,23 +91,63 @@
                         <h3>Speed (ms interval)</h3>
                         <div class="setting-control">
                             <label for="setting-startspeed">Start Speed</label>
-                            <input
-                                type="number"
-                                id="setting-startspeed"
-                                data-config="speed"
-                                min="50"
-                                max="300"
-                            />
+                            <div class="stepper">
+                                <button
+                                    type="button"
+                                    class="stepper-btn"
+                                    onclick="this.nextElementSibling.stepDown()"
+                                    aria-label="Decrease"
+                                >
+                                    −
+                                </button>
+                                <input
+                                    type="number"
+                                    id="setting-startspeed"
+                                    data-config="speed"
+                                    min="50"
+                                    max="300"
+                                />
+                                <button
+                                    type="button"
+                                    class="stepper-btn"
+                                    onclick="
+                                        this.previousElementSibling.stepUp()
+                                    "
+                                    aria-label="Increase"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
                         <div class="setting-control">
                             <label for="setting-maxspeed">Max Speed</label>
-                            <input
-                                type="number"
-                                id="setting-maxspeed"
-                                data-config="maxSpeed"
-                                min="10"
-                                max="100"
-                            />
+                            <div class="stepper">
+                                <button
+                                    type="button"
+                                    class="stepper-btn"
+                                    onclick="this.nextElementSibling.stepDown()"
+                                    aria-label="Decrease"
+                                >
+                                    −
+                                </button>
+                                <input
+                                    type="number"
+                                    id="setting-maxspeed"
+                                    data-config="maxSpeed"
+                                    min="10"
+                                    max="100"
+                                />
+                                <button
+                                    type="button"
+                                    class="stepper-btn"
+                                    onclick="
+                                        this.previousElementSibling.stepUp()
+                                    "
+                                    aria-label="Increase"
+                                >
+                                    +
+                                </button>
+                            </div>
                         </div>
                         <span class="setting-info">Lower value = faster</span>
                     </div>
